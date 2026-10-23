@@ -1,4 +1,6 @@
-# knoodle
+# Knoodle
+<img width="885" height="373" alt="image" src="https://github.com/user-attachments/assets/dfff9570-112d-4d1b-9b3e-516194d547bb" />
+
 # **Knoodle — The Learning Platform**
 *Learn it. Know it. Knoodle it.*
 
