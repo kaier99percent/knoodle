@@ -270,6 +270,9 @@
       gap: 10px;
       margin-top: 16px;
     }
+    .checkbox-group[hidden] {
+      display: none;
+    }
     .checkbox-group input {
       width: auto;
       margin-top: 4px;
@@ -443,6 +446,7 @@
       // show hide
       document.getElementById("signupFields").hidden = isLogin;
       document.getElementById("termsGroup").hidden = isLogin;
+      document.getElementById("termsCheck").hidden = isLogin;
 
       document.getElementById("username").required = !isLogin;
       document.getElementById("displayName").required = !isLogin;
@@ -451,6 +455,8 @@
 
     loginTab.addEventListener("click", () => setMode("login"));
     signupTab.addEventListener("click", () => setMode("signup"));
+
+    setMode("login");
 
     // --- CHECK url ---
     const params = new URLSearchParams(window.location.search);
