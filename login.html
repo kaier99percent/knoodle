@@ -492,25 +492,44 @@
             throw new Error("Display name must be between 1 and 40 characters.");
           }
 
-          const { data, error } = await supabaseClient.auth.signUp({
+          // --- FIX 1: TIMEOUT & ERROR HANDLING ---
+          message.textContent = "Creating your account...";
+          console.log("Knoodle: signup request started");
+
+          const signupPromise = supabaseClient.auth.signUp({
             email,
             password,
             options: {
-              // Updated this to point straight to the dashboard after email confirmation
               emailRedirectTo: window.location.origin + "/dashboard.html",
               data: {
-                username: username,
+                username,
                 display_name: displayName
               }
             }
           });
 
+          const timeoutPromise = new Promise((_, reject) => {
+            setTimeout(() => {
+              reject(new Error(
+                "The signup request is taking too long. Please check your connection and Supabase settings."
+              ));
+            }, 15000);
+          });
+
+          const { data, error } = await Promise.race([
+            signupPromise,
+            timeoutPromise
+          ]);
+
+          console.log("Knoodle: signup response received", data);
+
           if (error) throw error;
 
-          // We removed the instant redirect. Now it ALWAYS tells them to check their email.
-          message.textContent = "Account created! Check your email to confirm, then you'll be redirected to your dashboard.";
+          message.textContent =
+            "Account created! Check your email for the verification link.";
           message.style.color = "var(--primary)";
-          
+          // ---------------------------------------
+
         } else {
           const { error } = await supabaseClient.auth.signInWithPassword({
             email,
