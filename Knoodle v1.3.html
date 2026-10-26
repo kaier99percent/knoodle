@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — Knoodle</title>
+
+  <link rel="icon" type="image/png" href="icon.png">
+
+  <!-- fonty font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase.js"></script>
+
+  <style>
+    /* --- oooh variables --- */
+    :root[data-theme="light"] {
+      --bg: #fef8f0; --surface: #fffdf8; --text-main: #4a3f38;
+      --text-muted: #9b8877; --border: #f0e4d4; --primary: #dd7860;
+      --primary-hover: #b85a44; --primary-light: #fce8dc; --icon-border: #e8c9b8;
+      --card-shadow: 0 4px 15px rgba(200, 140, 100, 0.05);
+      --btn-text: #ffffff;
+      /* stat colours */
+      --stat-solid-bg: #e9f3e1; --stat-solid-color: #4f7a3a;
+      --stat-shaky-bg: #fdf5e2; --stat-shaky-color: #a87d24;
+      --stat-due-bg: #e6f0f4;   --stat-due-color: #3f6b7d;
+      /* Errorssss */
+      --error-bg: #fcebe8; --error-border: #f0b6ad; --error-text: #a8453a;
+    }
+
+    :root[data-theme="dark"] {
+      --bg: #1a1816; --surface: #24211e; --text-main: #f0ebe1;
+      --text-muted: #9c9691; --border: #3a342f; --primary: #e68b73;
+      --primary-hover: #f2a38d; --primary-light: #3a2a24; --icon-border: #4a3830;
+      --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      --btn-text: #1a1816;
+      /* stat colours - dark */
+      --stat-solid-bg: #1e2a1a; --stat-solid-color: #b8dd9f;
+      --stat-shaky-bg: #2e251a; --stat-shaky-color: #f0d99a;
+      --stat-due-bg: #1a2429;   --stat-due-color: #a9cfe0;
+      /* Error - dark */
+      --error-bg: #2e1a1a; --error-border: #4a1f1f; --error-text: #f0b6ad;
+    }
+
+    :root {
+      --radius-a: 16px 20px 18px 22px;
+      --radius-b: 20px 16px 22px 18px;
+      --radius-c: 18px 22px 16px 20px;
+      --sidebar-width: 260px;
+    }
+
+    * { 
+      box-sizing: border-box; margin: 0; padding: 0; 
+      transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+    }
+
+    body {
+      font-family: "Nunito", system-ui, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      background-image: 
+        radial-gradient(circle at 20% 10%, rgba(221, 120, 96, 0.03) 0, transparent 40%),
+        radial-gradient(circle at 80% 80%, rgba(127, 176, 105, 0.03) 0, transparent 40%),
+        linear-gradient(rgba(177, 202, 210, 0.06) 1px, transparent 1px);
+      background-size: auto, auto, 100% 34px;
+    }
+
+    /* --- Sidebar, can i get a drink pls --- */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 24px;
+      z-index: 100;
+    }
+
+    .brand {
+      display: flex; align-items: center; gap: 10px;
+      color: var(--text-main); font-weight: 850; font-size: 24px;
+      text-decoration: none; margin-bottom: 40px;
+    }
+    .brand img { width: 36px; height: 36px; border-radius: 8px; }
+
+    .nav-links { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+    
+    .nav-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 16px; border-radius: 12px;
+      color: var(--text-muted); font-weight: 700; font-size: 15px;
+      text-decoration: none; cursor: pointer;
+      transition: all 0.2s;
+      /* Button-specific resets */
+      width: 100%;
+      border: none;
+      background: transparent;
+      font-family: inherit;
+      text-align: left;
+    }
+
+    .nav-item:hover {
+      background: var(--bg); color: var(--text-main);
+    }
+
+    .nav-item.active {
+      background: var(--primary-light); color: var(--primary);
+    }
+
+    .nav-item svg { width: 20px; height: 20px; stroke-width: 2.5; flex-shrink: 0; }
+
+    .sidebar-footer {
+      margin-top: auto; padding-top: 20px; border-top: 1px dashed var(--border);
+      display: flex; flex-direction: column; gap: 10px;
+    }
+
+    .legal-links {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 0 12px;
+      margin-bottom: 10px;
+    }
+
+    .legal-links a {
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .legal-links a:hover {
+      color: var(--primary);
+      text-decoration: underline;
+    }
+
+    .logout-btn {
+      display: flex; align-items: center; gap: 10px;
+      width: 100%; padding: 12px; border: none; background: transparent;
+      color: var(--text-muted); font-family: inherit; font-weight: 700; font-size: 15px;
+      cursor: pointer; border-radius: 12px;
+    }
+    .logout-btn:hover { background: var(--error-bg); color: var(--error-text); }
+
+    /* --- main --- */
+    .main-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    /* --- Top --- */
+    .topbar {
+      height: 70px;
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      border-bottom: 1px solid var(--border);
+      background: rgba(254, 248, 240, 0.8);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    :root[data-theme="dark"] .topbar { background: rgba(26, 24, 22, 0.8); }
+
+    .topbar-actions { display: flex; align-items: center; gap: 16px; }
+
+    .theme-toggle {
+      background: var(--surface); border: 1.5px solid var(--border); color: var(--text-main);
+      width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;
+    }
+    .theme-toggle:hover { border-color: var(--primary); color: var(--primary); }
+
+    /* logout icon shows only on mobile */
+    .mobile-logout { display: none; }
+    .mobile-logout:hover { background: var(--error-bg); color: var(--error-text); border-color: var(--error-border); }
+
+    .user-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: var(--primary-light); color: var(--primary);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 850; font-size: 16px; border: 1.5px solid var(--icon-border);
+    }
+
+    /* --- View --- */
+    .content-area {
+      padding: 40px;
+      max-width: 1000px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .view { display: none; animation: fadeIn 0.3s ease; }
+    .view.active { display: block; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* --- Error popup --- */
+    .error-banner {
+      display: none;
+      background: var(--error-bg);
+      border: 1.5px solid var(--error-border);
+      color: var(--error-text);
+      padding: 20px 24px;
+      border-radius: var(--radius-c);
+      font-weight: 700;
+      font-size: 15px;
+      line-height: 1.5;
+      margin-bottom: 24px;
+    }
+    .error-banner strong { display: block; font-size: 16px; margin-bottom: 4px; }
+
+    /* --- home --- */
+    .welcome-header { margin-bottom: 32px; }
+
+    .date-chip {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .welcome-header h1 { font-size: 36px; font-weight: 850; color: var(--text-main); margin-bottom: 8px; }
+    .welcome-header h1 span { color: var(--primary); }
+    .welcome-header .welcome-sub { font-size: 16px; color: var(--text-muted); font-weight: 600; }
+
+    /* --- stat cards --- */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .stat-card {
+      background: var(--surface); border: 1.5px solid var(--border);
+      border-radius: var(--radius-c); padding: 22px;
+      display: flex; align-items: center; gap: 18px;
+      box-shadow: var(--card-shadow);
+      transition: background-color 0.3s, border-color 0.3s, color 0.3s, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(200, 140, 100, 0.12);
+    }
+
+    .stat-icon {
+      width: 56px; height: 56px; border-radius: 16px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .stat-icon.solid { background: var(--stat-solid-bg); color: var(--stat-solid-color); }
+    .stat-icon.shaky { background: var(--stat-shaky-bg); color: var(--stat-shaky-color); }
+    .stat-icon.due   { background: var(--stat-due-bg);   color: var(--stat-due-color); }
+
+    .stat-info h3 { font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+    .stat-info p { font-size: 27px; font-weight: 850; color: var(--text-main); line-height: 1.1; margin-top: 4px; }
+    .stat-info small { display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); margin-top: 3px; }
+
+    /* --- philosophy note --- */
+    .learning-note {
+      display: flex; align-items: flex-start; gap: 10px;
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 14px; padding: 14px 18px;
+      font-size: 13.5px; font-weight: 700; color: var(--text-muted);
+      line-height: 1.5; margin-bottom: 28px;
+    }
+    .learning-note svg { flex-shrink: 0; color: var(--primary); margin-top: 1px; }
+
+    /* --- generic section card --- */
+    .section-card {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-c);
+      padding: 26px;
+      box-shadow: var(--card-shadow);
+      margin-bottom: 24px;
+    }
+
+    .section-head {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; flex-wrap: wrap; margin-bottom: 6px;
+    }
+    .section-head h2 { font-size: 19px; font-weight: 850; }
+
+    .section-sub {
+      font-size: 14px; color: var(--text-muted); font-weight: 600;
+      line-height: 1.55; margin-bottom: 20px; max-width: 640px;
+    }
+
+    /* --- pills --- */
+    .pill {
+      font-size: 11px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.7px; padding: 5px 11px; border-radius: 999px;
+      background: var(--primary-light); color: var(--primary);
+      white-space: nowrap;
+    }
+    .pill.soft { background: var(--bg); color: var(--text-muted); border: 1px solid var(--border); }
+
+    /* --- placeholder boxes --- */
+    .placeholder-box {
+      border: 1.5px dashed var(--icon-border);
+      border-radius: var(--radius-a);
+      padding: 26px 22px;
+      text-align: center;
+      background: var(--bg);
+    }
+    .placeholder-box strong {
+      display: block; font-size: 15px; font-weight: 850;
+      margin-bottom: 6px; color: var(--text-main);
+    }
+    .placeholder-box p {
+      font-size: 14px; color: var(--text-muted); font-weight: 600;
+      line-height: 1.6; max-width: 470px; margin: 0 auto;
+    }
+
+    /* --- continue / in-progress strip --- */
+    .continue-strip {
+      display: flex; align-items: center; gap: 16px;
+      background: var(--bg); border: 1.5px dashed var(--icon-border);
+      border-radius: var(--radius-a); padding: 18px 20px;
+    }
+    .subject-badge {
+      width: 48px; height: 48px; border-radius: 14px; flex-shrink: 0;
+      background: var(--primary-light); color: var(--primary);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 850; font-size: 15px; letter-spacing: 0.5px;
+    }
+    .continue-body { flex: 1; min-width: 0; }
+    .continue-body strong { display: block; font-size: 15px; font-weight: 850; }
+    .continue-body span { display: block; font-size: 13px; color: var(--text-muted); font-weight: 700; margin-top: 2px; }
+    .progress-track {
+      height: 9px; margin-top: 10px; border-radius: 999px; overflow: hidden;
+      background: var(--surface); border: 1px solid var(--border);
+    }
+    .progress-fill { height: 100%; width: 0%; background: var(--primary); border-radius: 999px; transition: width 0.4s ease; }
+
+    /* --- subject grid --- */
+    .subject-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 14px;
+    }
+    .subject-tile {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: var(--radius-a); padding: 18px 16px;
+      display: flex; flex-direction: column; gap: 10px;
+      transition: background-color 0.3s, border-color 0.3s, color 0.3s, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .subject-tile:hover {
+      transform: translateY(-2px);
+      border-color: var(--icon-border);
+      box-shadow: 0 6px 18px rgba(200, 140, 100, 0.1);
+    }
+    .subject-tile .s-icon {
+      width: 38px; height: 38px; border-radius: 12px;
+      background: var(--primary-light); color: var(--primary);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .subject-tile strong { font-size: 15px; font-weight: 850; }
+    .subject-tile span { font-size: 12.5px; color: var(--text-muted); font-weight: 700; }
+
+    /* --- quote --- */
+    .quote-card {
+      background: var(--primary-light);
+      border: 1.5px solid var(--icon-border);
+      border-radius: var(--radius-b);
+      padding: 28px 26px;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .quote-card blockquote {
+      font-size: 17px; font-weight: 800; color: var(--text-main);
+      line-height: 1.55; font-style: italic;
+    }
+    .quote-card cite {
+      display: block; margin-top: 10px; font-size: 13px;
+      font-weight: 700; color: var(--text-muted); font-style: normal;
+    }
+
+    /* --- profile --- */
+    .profile-header { display: flex; align-items: center; gap: 24px; margin-bottom: 40px; }
+    .profile-avatar-large {
+      width: 90px; height: 90px; border-radius: 50%;
+      background: var(--primary-light); color: var(--primary);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 850; font-size: 36px; border: 3px solid var(--icon-border);
+      flex-shrink: 0;
+    }
+    .profile-info h1 { font-size: 32px; font-weight: 850; }
+    .profile-info p { font-size: 15px; color: var(--text-muted); font-weight: 700; }
+
+    .profile-tabs { display: flex; gap: 10px; margin-bottom: 30px; border-bottom: 1.5px solid var(--border); padding-bottom: 15px; overflow-x: auto; }
+    .profile-tab {
+      background: transparent; border: none; padding: 10px 18px;
+      font-family: inherit; font-size: 15px; font-weight: 800; color: var(--text-muted);
+      cursor: pointer; border-radius: 20px; white-space: nowrap;
+    }
+    .profile-tab.active { background: var(--primary-light); color: var(--primary); }
+
+    .profile-content {
+      background: var(--surface); border: 1.5px solid var(--border);
+      border-radius: var(--radius-c); padding: 30px; box-shadow: var(--card-shadow);
+    }
+
+    .tab-pane { display: none; animation: fadeIn 0.3s ease; }
+    .tab-pane.active { display: block; }
+
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .info-item { background: var(--bg); padding: 16px; border-radius: 12px; border: 1px solid var(--border); }
+    .info-item span { display: block; font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; }
+    .info-item strong { font-size: 16px; font-weight: 700; color: var(--text-main); }
+
+    .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); font-weight: 600; }
+    .empty-state p { line-height: 1.6; max-width: 440px; margin: 0 auto; }
+
+    /* --- accessibility --- */
+    button:focus-visible, a:focus-visible {
+      outline: 2.5px solid var(--primary);
+      outline-offset: 3px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+      .stat-card:hover, .subject-tile:hover { transform: none; }
+    }
+
+    /* --- responisve --- */
+    @media (max-width: 768px) {
+      body { flex-direction: column; }
+      .sidebar {
+        width: 100%; height: auto; position: fixed; bottom: 0; top: auto;
+        flex-direction: row; padding: 10px 20px; border-right: none; border-top: 1px solid var(--border);
+        justify-content: center; z-index: 100;
+      }
+      .brand, .sidebar-footer { display: none; }
+      .nav-links { flex-direction: row; justify-content: center; gap: 20px; }
+      .nav-item { flex-direction: column; gap: 4px; font-size: 11px; padding: 8px 16px; }
+      .nav-item svg { width: 24px; height: 24px; }
+
+      .mobile-logout { display: flex; }
+      
+      .main-wrapper { padding-bottom: 80px; }
+      .topbar { padding: 0 20px; }
+      .content-area { padding: 20px; }
+      
+      .welcome-header h1 { font-size: 28px; }
+      .stats-row { grid-template-columns: 1fr; }
+      .profile-header { flex-direction: column; text-align: center; }
+      .info-grid { grid-template-columns: 1fr; }
+      .section-card { padding: 20px; }
+      .continue-strip { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+
+<body>
+  
+  <!-- sidebar hmmm -->
+  <aside class="sidebar">
+    <a class="brand" href="index.html">
+      <img src="icon.png" alt="Knoodle">
+      <span>Knoodle</span>
+    </a>
+    
+    <div class="nav-links">
+      <button type="button" class="nav-item active" data-target="home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        Home
+      </button>
+      <button type="button" class="nav-item" data-target="profile">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        Profile
+      </button>
+      <!-- coming soon -->
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="legal-links">
+        <a href="terms.html">Terms of Service</a>
+        <a href="privacy.html">Privacy Policy</a>
+      </div>
+      
+      <button type="button" class="logout-btn" id="logoutBtn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        Log out
+      </button>
+    </div>
+  </aside>
+
+  <!-- main -->
+  <div class="main-wrapper">
+    
+    <!-- top -->
+    <header class="topbar">
+      <div class="topbar-actions">
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+          <svg id="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          <svg id="icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        </button>
+        <button class="theme-toggle mobile-logout" id="logoutMobile" aria-label="Log out">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        </button>
+        <div class="user-avatar" id="topbarAvatar">K</div>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <main class="content-area" id="mainContent" style="display:none;">
+      
+      <!-- Error -->
+      <div class="error-banner" id="errorBanner">
+        <strong>Something went wrong</strong>
+        <span id="errorMessage">We couldn't load your profile. Please try refreshing the page.</span>
+      </div>
+
+      <!-- ============ HOME ============ -->
+      <section class="view active" id="view-home">
+        <div class="welcome-header">
+          <div class="date-chip" id="todayDate"></div>
+          <h1><span id="greeting">Hello</span>, <span id="homeDisplayName">learner</span>!</h1>
+          <p class="welcome-sub" id="welcomeSub">Here's what you actually know — and what still needs a bit of work.</p>
+        </div>
+
+        <!-- Learning stats, not gamification -->
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-icon solid">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            </div>
+            <div class="stat-info">
+              <h3>Know it</h3>
+              <p id="homeKnown">0</p>
+              <small>things you can recall without help</small>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon shaky">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12c2-4 4-4 6 0s4 4 6 0 4-4 6 0"></path></svg>
+            </div>
+            <div class="stat-info">
+              <h3>Still shaky</h3>
+              <p id="homeShaky">0</p>
+              <small>things worth another look</small>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon due">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15.5 14"></polyline></svg>
+            </div>
+            <div class="stat-info">
+              <h3>Due for review</h3>
+              <p id="homeDue">0</p>
+              <small>about to slip if you skip them</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- philosophy note -->
+        <div class="learning-note">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+          <span>These aren't scores — they're a map of what you actually know. We don't measure minutes; we measure what sticks.</span>
+        </div>
+
+        <!-- Continue learning -->
+        <div class="section-card">
+          <div class="section-head">
+            <h2>Pick up where you left off</h2>
+            <span class="pill soft">Nothing in progress</span>
+          </div>
+          <p class="section-sub">No timer, no pressure. Whatever you were working on will be waiting right here.</p>
+
+          <div class="continue-strip">
+            <div class="subject-badge">—</div>
+            <div class="continue-body">
+              <strong>No lesson started yet</strong>
+              <span>Your next lesson will appear here once you begin.</span>
+              <div class="progress-track"><div class="progress-fill" id="continueProgress"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Shaky things -->
+        <div class="section-card">
+          <div class="section-head">
+            <h2>Needs attention</h2>
+            <span class="pill soft">0 flagged</span>
+          </div>
+          <p class="section-sub">Anything you got wrong, nearly forgot, or answered by guessing gets flagged here so you can actually fix it — not just move on.</p>
+
+          <div class="placeholder-box">
+            <strong>Nothing flagged as shaky yet</strong>
+            <p>As you practise, Knoodle will spot the things that haven't fully stuck and put them here. That's the stuff worth going back to.</p>
+          </div>
+        </div>
+
+        <!-- Explore -->
+        <div class="section-card">
+          <div class="section-head">
+            <h2>What you can learn</h2>
+            <span class="pill">Beta</span>
+          </div>
+          <p class="section-sub">Knoodle is a all in one learn app, the diffrent learning modules are still in development, we are trying to do our best.</p>
+
+          <div class="subject-grid">
+            <div class="subject-tile">
+              <div class="s-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+              </div>
+              <strong>Languages</strong>
+              <span>Coming up feature</span>
+            </div>
+
+            <div class="subject-tile">
+              <div class="s-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+              </div>
+              <strong>School subjects</strong>
+              <span>Coming soon</span>
+            </div>
+
+            <div class="subject-tile">
+              <div class="s-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6"></path><path d="M10 3v6L5.5 18a2 2 0 0 0 1.8 3h9.4a2 2 0 0 0 1.8-3L14 9V3"></path><line x1="7.5" y1="14" x2="16.5" y2="14"></line></svg>
+              </div>
+              <strong>Science</strong>
+              <span>Coming soon</span>
+            </div>
+
+            <div class="subject-tile">
+              <div class="s-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+              </div>
+              <strong>Coding &amp; tech</strong>
+              <span>Coming soon</span>
+            </div>
+
+            <div class="subject-tile">
+              <div class="s-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+              </div>
+              <strong>Your own material</strong>
+              <span>Coming soon</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Philosophy quote -->
+        <div class="quote-card">
+          <blockquote>“Education is not the learning of facts, but the training of the mind to think.”</blockquote>
+          <cite>Often attributed to Albert Einstein</cite>
+        </div>
+      </section>
+
+      <!-- ============ PROFILE ============ -->
+      <section class="view" id="view-profile">
+        <div class="profile-header">
+          <div class="profile-avatar-large" id="profileAvatar">K</div>
+          <div class="profile-info">
+            <h1 id="profileDisplayName">Learner</h1>
+            <p>@<span id="profileUsername">username</span></p>
+          </div>
+        </div>
+
+        <div class="profile-tabs">
+          <button type="button" class="profile-tab active" data-tab="overview">Overview</button>
+          <button type="button" class="profile-tab" data-tab="statistics">Learning</button>
+          <button type="button" class="profile-tab" data-tab="achievements">Milestones</button>
+          <button type="button" class="profile-tab" data-tab="activity">Activity</button>
+        </div>
+
+        <div class="profile-content">
+          <!-- Overview -->
+          <div class="tab-pane active" id="tab-overview">
+            <div class="info-grid">
+              <div class="info-item">
+                <span>Display Name</span>
+                <strong id="infoDisplayName">Loading...</strong>
+              </div>
+              <div class="info-item">
+                <span>Username</span>
+                <strong id="infoUsername">Loading...</strong>
+              </div>
+              <div class="info-item">
+                <span>Email Address</span>
+                <strong id="infoEmail">Loading...</strong>
+              </div>
+              <div class="info-item">
+                <span>Things you know</span>
+                <strong id="infoKnown">0</strong>
+              </div>
+              <div class="info-item">
+                <span>Needs another look</span>
+                <strong id="infoShaky">0</strong>
+              </div>
+              <div class="info-item">
+                <span>Member Since</span>
+                <strong id="infoJoined">Loading...</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- Learning Tab -->
+          <div class="tab-pane" id="tab-statistics">
+            <div class="empty-state">
+              <p>Once you start learning, this is where you'll see what's solid, what's shaky, and what's about to slip — not how many minutes you spent in the app.</p>
+            </div>
+          </div>
+
+          <!-- Milestones Tab -->
+          <div class="tab-pane" id="tab-achievements">
+            <div class="empty-state">
+              <p>Milestones here mark things you've actually learned, not how many days in a row you opened Knoodle.</p>
+            </div>
+          </div>
+
+          <!-- Activity Tab -->
+          <div class="tab-pane" id="tab-activity">
+            <div class="empty-state">
+              <p>Your recent practice sessions will appear here, along with what changed afterwards.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    // --- theme ---
+    var themeToggle = document.getElementById('themeToggle');
+    var iconMoon = document.getElementById('icon-moon');
+    var iconSun = document.getElementById('icon-sun');
+    var root = document.documentElement;
+
+    function updateIcon(theme) {
+      if (theme === 'dark') { iconMoon.style.display = 'none'; iconSun.style.display = 'block'; }
+      else { iconMoon.style.display = 'block'; iconSun.style.display = 'none'; }
+    }
+
+    var savedTheme = 'light';
+    try {
+      if (localStorage.getItem('knoodle-theme')) savedTheme = localStorage.getItem('knoodle-theme');
+      else if (window.matchMedia('(prefers-color-scheme: dark)').matches) savedTheme = 'dark';
+    } catch (e) {}
+    
+    root.setAttribute('data-theme', savedTheme);
+    updateIcon(savedTheme);
+
+    themeToggle.addEventListener('click', function() {
+      var newTheme = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      root.setAttribute('data-theme', newTheme);
+      updateIcon(newTheme);
+      try { localStorage.setItem('knoodle-theme', newTheme); } catch (e) {}
+    });
+
+    // --- time-aware greeting ---
+    // Buckets: morning 5–11, afternoon 12–16, evening 17–21, late 22–4
+    function getTimeContext() {
+      const hour = new Date().getHours();
+      if (hour >= 5 && hour < 12) {
+        return {
+          greeting: "Good morning",
+          subtitle: "A fresh start — pick one small thing worth learning properly today."
+        };
+      }
+      if (hour >= 12 && hour < 17) {
+        return {
+          greeting: "Good afternoon",
+          subtitle: "Take your time. One thing that sticks beats twenty that don't."
+        };
+      }
+      if (hour >= 17 && hour < 22) {
+        return {
+          greeting: "Good evening",
+          subtitle: "No rush here. A few focused minutes go a long way."
+        };
+      }
+      return {
+        greeting: "Still up",
+        subtitle: "A little now, and your brain will quietly file it away while you sleep."
+      };
+    }
+
+    function refreshTimeContext() {
+      const ctx = getTimeContext();
+      document.getElementById('greeting').textContent = ctx.greeting;
+      document.getElementById('welcomeSub').textContent = ctx.subtitle;
+      document.getElementById('todayDate').textContent =
+        new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+    }
+
+    // keep the greeting accurate if the tab is left open past noon/midnight
+    refreshTimeContext();
+    setInterval(refreshTimeContext, 60000);
+    document.addEventListener('visibilitychange', function () {
+      if (!document.hidden) refreshTimeContext();
+    });
+
+    // --- navigation ---
+    const navItems = document.querySelectorAll('.nav-item');
+    const views = document.querySelectorAll('.view');
+
+    navItems.forEach(item => {
+      item.addEventListener('click', () => {
+        navItems.forEach(nav => nav.classList.remove('active'));
+        item.classList.add('active');
+
+        const target = item.getAttribute('data-target');
+        views.forEach(view => {
+          view.classList.remove('active');
+          if (view.id === `view-${target}`) view.classList.add('active');
+        });
+      });
+    });
+
+    // --- profile tab logic ---
+    const tabs = document.querySelectorAll('.profile-tab');
+    const panes = document.querySelectorAll('.tab-pane');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        const target = tab.getAttribute('data-tab');
+        panes.forEach(pane => {
+          pane.classList.remove('active');
+          if (pane.id === `tab-${target}`) pane.classList.add('active');
+        });
+      });
+    });
+
+    // --- Error handler ---
+    function showError(message) {
+      document.getElementById('mainContent').style.display = 'block';
+      document.getElementById('errorBanner').style.display = 'block';
+      document.getElementById('errorMessage').textContent = message;
+      views.forEach(view => view.classList.remove('active'));
+    }
+
+    // --- SUPABASE ---
+    async function loadDashboard() {
+      let sessionData;
+      try {
+        sessionData = await supabaseClient.auth.getSession();
+      } catch (e) {
+        showError("We couldn't connect to the server. Please check your internet connection and refresh.");
+        return;
+      }
+
+      const { data, error } = sessionData;
+
+      if (error || !data.session) {
+        window.location.replace("login.html");
+        return;
+      }
+
+      const user = data.session.user;
+
+      let profile = null;
+      let profileError = null;
+      try {
+        const result = await supabaseClient
+          .from("profiles")
+          .select("username, display_name")
+          .eq("id", user.id)
+          .maybeSingle();
+        profile = result.data;
+        profileError = result.error;
+      } catch (e) {
+        profileError = e;
+      }
+
+      if (profileError) {
+        console.error(profileError);
+        showError("We couldn't load your profile. This may be a temporary issue. Please refresh the page.");
+        return;
+      }
+
+      // Extract data
+      const displayName = profile?.display_name || "learner";
+      const username = profile?.username || "user";
+      const email = user.email || "Not available";
+      const joined = new Date(user.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+      // Placeholders — real learning data arrives with v1.0
+      const known = 0;
+      const shaky = 0;
+      const due = 0;
+
+      // update Top Bar
+      document.getElementById('topbarAvatar').textContent = displayName.charAt(0).toUpperCase();
+
+      // Home View — greeting handled by refreshTimeContext()
+      document.getElementById('homeDisplayName').textContent = displayName;
+      document.getElementById('homeKnown').textContent = known;
+      document.getElementById('homeShaky').textContent = shaky;
+      document.getElementById('homeDue').textContent = due;
+
+      // Profile View
+      document.getElementById('profileAvatar').textContent = displayName.charAt(0).toUpperCase();
+      document.getElementById('profileDisplayName').textContent = displayName;
+      document.getElementById('profileUsername').textContent = username;
+
+      document.getElementById('infoDisplayName').textContent = displayName;
+      document.getElementById('infoUsername').textContent = "@" + username;
+      document.getElementById('infoEmail').textContent = email;
+      document.getElementById('infoKnown').textContent = known;
+      document.getElementById('infoShaky').textContent = shaky;
+      document.getElementById('infoJoined').textContent = joined;
+
+      // Show main content
+      document.getElementById('mainContent').style.display = 'block';
+    }
+
+    // --- bye ---
+    async function signOut() {
+      const { error } = await supabaseClient.auth.signOut();
+      if (error) {
+        alert("Couldn't log out. Please try again.");
+        return;
+      }
+      window.location.replace("login.html");
+    }
+
+    document.getElementById('logoutBtn').addEventListener('click', signOut);
+    document.getElementById('logoutMobile').addEventListener('click', signOut);
+
+    // Init
+    loadDashboard();
+  </script>
+</body>
+</html>
