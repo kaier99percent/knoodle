@@ -87,16 +87,32 @@
     .brand {
       display: flex; align-items: center; gap: 10px;
       color: var(--text-main); font-weight: 850; font-size: 24px;
-      text-decoration: none; margin-bottom: 40px;
+      text-decoration: none; margin-bottom: 28px; flex-shrink: 0;
     }
     .brand img { width: 36px; height: 36px; border-radius: 8px; }
 
-    .nav-links { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+    /* the nav now needs to scroll — lots of subjects */
+    .nav-links {
+      display: flex; flex-direction: column; gap: 6px; flex: 1;
+      overflow-y: auto; min-height: 0;
+      margin: 0 -8px; padding: 0 8px 8px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--icon-border) transparent;
+    }
+    .nav-links::-webkit-scrollbar { width: 6px; }
+    .nav-links::-webkit-scrollbar-thumb { background: var(--icon-border); border-radius: 99px; }
+    .nav-links::-webkit-scrollbar-track { background: transparent; }
+
+    .nav-label {
+      font-size: 11px; font-weight: 800; letter-spacing: 1.3px;
+      text-transform: uppercase; color: var(--text-muted);
+      padding: 16px 16px 4px; opacity: 0.85; flex-shrink: 0;
+    }
     
     .nav-item {
       display: flex; align-items: center; gap: 12px;
-      padding: 12px 16px; border-radius: 12px;
-      color: var(--text-muted); font-weight: 700; font-size: 15px;
+      padding: 11px 16px; border-radius: 12px;
+      color: var(--text-muted); font-weight: 700; font-size: 14.5px;
       text-decoration: none; cursor: pointer;
       transition: all 0.2s;
       /* Button-specific resets */
@@ -105,6 +121,7 @@
       background: transparent;
       font-family: inherit;
       text-align: left;
+      flex-shrink: 0;
     }
 
     .nav-item:hover {
@@ -118,8 +135,8 @@
     .nav-item svg { width: 20px; height: 20px; stroke-width: 2.5; flex-shrink: 0; }
 
     .sidebar-footer {
-      margin-top: auto; padding-top: 20px; border-top: 1px dashed var(--border);
-      display: flex; flex-direction: column; gap: 10px;
+      margin-top: auto; padding-top: 16px; border-top: 1px dashed var(--border);
+      display: flex; flex-direction: column; gap: 10px; flex-shrink: 0;
     }
 
     .legal-links {
@@ -359,6 +376,8 @@
       background: var(--bg); border: 1px solid var(--border);
       border-radius: var(--radius-a); padding: 18px 16px;
       display: flex; flex-direction: column; gap: 10px;
+      font-family: inherit; color: var(--text-main); text-align: left;
+      cursor: pointer;
       transition: background-color 0.3s, border-color 0.3s, color 0.3s, transform 0.2s ease, box-shadow 0.2s ease;
     }
     .subject-tile:hover {
@@ -373,6 +392,39 @@
     }
     .subject-tile strong { font-size: 15px; font-weight: 850; }
     .subject-tile span { font-size: 12.5px; color: var(--text-muted); font-weight: 700; }
+
+    /* --- coming soon subject pages --- */
+    .coming-hero {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-b);
+      padding: 44px 30px 38px;
+      text-align: center;
+      box-shadow: var(--card-shadow);
+      margin-bottom: 24px;
+    }
+    .coming-icon {
+      width: 64px; height: 64px; border-radius: 18px;
+      background: var(--primary-light); color: var(--primary);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 18px;
+    }
+    .coming-hero h1 { font-size: 30px; font-weight: 850; margin-bottom: 10px; }
+    .coming-hero .coming-sub {
+      font-size: 15px; color: var(--text-muted); font-weight: 600;
+      max-width: 480px; margin: 0 auto 18px; line-height: 1.6;
+    }
+
+    .plan-list {
+      display: grid; gap: 12px;
+      max-width: 470px; margin: 18px auto 0; text-align: left;
+    }
+    .plan-list div {
+      display: flex; gap: 11px; align-items: flex-start;
+      font-size: 14px; font-weight: 700; color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .plan-list svg { flex-shrink: 0; color: var(--primary); margin-top: 2px; }
 
     /* --- quote --- */
     .quote-card {
@@ -447,13 +499,19 @@
       body { flex-direction: column; }
       .sidebar {
         width: 100%; height: auto; position: fixed; bottom: 0; top: auto;
-        flex-direction: row; padding: 10px 20px; border-right: none; border-top: 1px solid var(--border);
+        flex-direction: row; padding: 10px 12px; border-right: none; border-top: 1px solid var(--border);
         justify-content: center; z-index: 100;
       }
-      .brand, .sidebar-footer { display: none; }
-      .nav-links { flex-direction: row; justify-content: center; gap: 20px; }
-      .nav-item { flex-direction: column; gap: 4px; font-size: 11px; padding: 8px 16px; }
-      .nav-item svg { width: 24px; height: 24px; }
+      .brand, .sidebar-footer, .nav-label { display: none; }
+      .nav-links {
+        flex-direction: row; justify-content: flex-start; gap: 6px;
+        overflow-x: auto; overflow-y: hidden;
+        margin: 0; padding: 0;
+        -webkit-overflow-scrolling: touch;
+      }
+      .nav-links::-webkit-scrollbar { width: 0; height: 0; }
+      .nav-item { flex-direction: column; gap: 4px; font-size: 11px; padding: 8px 14px; width: auto; }
+      .nav-item svg { width: 22px; height: 22px; }
 
       .mobile-logout { display: flex; }
       
@@ -467,6 +525,8 @@
       .info-grid { grid-template-columns: 1fr; }
       .section-card { padding: 20px; }
       .continue-strip { flex-direction: column; align-items: flex-start; }
+      .coming-hero { padding: 34px 20px 30px; }
+      .coming-hero h1 { font-size: 25px; }
     }
   </style>
 </head>
@@ -489,7 +549,38 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
         Profile
       </button>
-      <!-- coming soon -->
+
+      <div class="nav-label">Subjects</div>
+
+      <button type="button" class="nav-item" data-target="languages">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+        Languages
+      </button>
+
+      <button type="button" class="nav-item" data-target="coding">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+        Coding &amp; Technology
+      </button>
+
+      <button type="button" class="nav-item" data-target="science">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6"></path><path d="M10 3v6L5.5 18a2 2 0 0 0 1.8 3h9.4a2 2 0 0 0 1.8-3L14 9V3"></path><line x1="7.5" y1="14" x2="16.5" y2="14"></line></svg>
+        Science &amp; Nature
+      </button>
+
+      <button type="button" class="nav-item" data-target="math">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><circle cx="12" cy="6" r="1.6"></circle><circle cx="12" cy="18" r="1.6"></circle></svg>
+        Math &amp; Logic
+      </button>
+
+      <button type="button" class="nav-item" data-target="humanities">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+        Humanities &amp; World
+      </button>
+
+      <button type="button" class="nav-item" data-target="games">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-3a2 2 0 1 0-4 0H9a1 1 0 0 0-1 1v3a2 2 0 1 0 0 4v3a1 1 0 0 0 1 1h3a2 2 0 1 1 4 0h3a1 1 0 0 0 1-1v-3a2 2 0 1 0 0-4V8a1 1 0 0 0-1-1z"></path></svg>
+        Games &amp; Problem Solving
+      </button>
     </div>
 
     <div class="sidebar-footer">
@@ -619,48 +710,56 @@
             <h2>What you can learn</h2>
             <span class="pill">Beta</span>
           </div>
-          <p class="section-sub">Knoodle is a all in one learn app, the diffrent learning modules are still in development, we are trying to do our best.</p>
+          <p class="section-sub">Knoodle starts with languages, but the idea doesn't stop at vocabulary. You choose what to learn — we just help it stick. Tap a subject to see what's coming.</p>
 
           <div class="subject-grid">
-            <div class="subject-tile">
+            <button type="button" class="subject-tile" data-target="languages">
               <div class="s-icon">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
               </div>
               <strong>Languages</strong>
-              <span>Coming up feature</span>
-            </div>
+              <span>Coming first</span>
+            </button>
 
-            <div class="subject-tile">
-              <div class="s-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
-              </div>
-              <strong>School subjects</strong>
-              <span>Coming soon</span>
-            </div>
-
-            <div class="subject-tile">
-              <div class="s-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6"></path><path d="M10 3v6L5.5 18a2 2 0 0 0 1.8 3h9.4a2 2 0 0 0 1.8-3L14 9V3"></path><line x1="7.5" y1="14" x2="16.5" y2="14"></line></svg>
-              </div>
-              <strong>Science</strong>
-              <span>Coming soon</span>
-            </div>
-
-            <div class="subject-tile">
+            <button type="button" class="subject-tile" data-target="coding">
               <div class="s-icon">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
               </div>
               <strong>Coding &amp; tech</strong>
               <span>Coming soon</span>
-            </div>
+            </button>
 
-            <div class="subject-tile">
+            <button type="button" class="subject-tile" data-target="science">
               <div class="s-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6"></path><path d="M10 3v6L5.5 18a2 2 0 0 0 1.8 3h9.4a2 2 0 0 0 1.8-3L14 9V3"></path><line x1="7.5" y1="14" x2="16.5" y2="14"></line></svg>
               </div>
-              <strong>Your own material</strong>
+              <strong>Science &amp; nature</strong>
               <span>Coming soon</span>
-            </div>
+            </button>
+
+            <button type="button" class="subject-tile" data-target="math">
+              <div class="s-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><circle cx="12" cy="6" r="1.6"></circle><circle cx="12" cy="18" r="1.6"></circle></svg>
+              </div>
+              <strong>Math &amp; logic</strong>
+              <span>Coming soon</span>
+            </button>
+
+            <button type="button" class="subject-tile" data-target="humanities">
+              <div class="s-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+              </div>
+              <strong>Humanities &amp; world</strong>
+              <span>Coming soon</span>
+            </button>
+
+            <button type="button" class="subject-tile" data-target="games">
+              <div class="s-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-3a2 2 0 1 0-4 0H9a1 1 0 0 0-1 1v3a2 2 0 1 0 0 4v3a1 1 0 0 0 1 1h3a2 2 0 1 1 4 0h3a1 1 0 0 0 1-1v-3a2 2 0 1 0 0-4V8a1 1 0 0 0-1-1z"></path></svg>
+              </div>
+              <strong>Games &amp; problem solving</strong>
+              <span>Coming soon</span>
+            </button>
           </div>
         </div>
 
@@ -668,6 +767,246 @@
         <div class="quote-card">
           <blockquote>“Education is not the learning of facts, but the training of the mind to think.”</blockquote>
           <cite>Often attributed to Albert Einstein</cite>
+        </div>
+      </section>
+
+      <!-- ============ LANGUAGES ============ -->
+      <section class="view" id="view-languages">
+        <div class="coming-hero">
+          <div class="coming-icon">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+          </div>
+          <h1>Languages</h1>
+          <p class="coming-sub">Vocabulary, grammar and phrases you'll actually remember — not just recognise on a screen.</p>
+          <span class="pill">Coming first</span>
+        </div>
+
+        <div class="section-card">
+          <div class="section-head">
+            <h2>What's being built</h2>
+            <span class="pill soft">In the works</span>
+          </div>
+          <p class="section-sub">Languages are the first subject Knoodle will open. Here's what that will look like when version 1.0 arrives.</p>
+
+          <div class="placeholder-box">
+            <strong>No lessons available yet</strong>
+            <p>We'd rather launch one thing that works than five that don't. Languages go first, then the rest.</p>
+
+            <div class="plan-list">
+              <div>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Vocabulary you can recall from memory, not just tap
+              </div>
+              <div>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Short practice sets you can finish in a few minutes
+              </div>
+              <div>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Review that resurfaces the words that are slipping
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ CODING & TECHNOLOGY ============ -->
+      <section class="view" id="view-coding">
+        <div class="coming-hero">
+          <div class="coming-icon">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+          </div>
+          <h1>Coding &amp; Technology</h1>
+          <p class="coming-sub">From your first line of code to understanding how the systems you use every day actually work.</p>
+          <span class="pill">Coming soon</span>
+        </div>
+
+        <div class="section-card">
+          <div class="section-head">
+            <h2>What's planned</h2>
+            <span class="pill soft">Not started</span>
+          </div>
+          <p class="section-sub">This subject is designed for people who want to understand code, not just copy it.</p>
+
+          <div class="placeholder-box">
+            <strong>Coding lessons aren't available yet</strong>
+            <p>Nothing here is AI-generated or auto-written. Lessons get built properly, by hand, before they appear.</p>
+
+            <div class="plan-list">
+              <div>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Programming basics taught from first principles
+              </div>
+              <div>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Reading and debugging code, not just writing it
+              </div>
+              <div>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                How computers, networks and the web fit together
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ SCIENCE & NATURE ============ -->
+      <section class="view" id="view-science">
+        <div class="coming-hero">
+          <div class="coming-icon">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6"></path><path d="M10 3v6L5.5 18a2 2 0 0 0 1.8 3h9.4a2 2 0 0 0 1.8-3L14 9V3"></path><line x1="7.5" y1="14" x2="16.5" y2="14"></line></svg>
+          </div>
+          <h1>Science &amp; Nature</h1>
+          <p class="coming-sub">Biology, chemistry, physics — and the world just outside your window.</p>
+          <span class="pill">Coming soon</span>
+        </div>
+
+        <div class="section-card">
+          <div class="section-head">
+            <h2>What's planned</h2>
+            <span class="pill soft">Not started</span>
+          </div>
+          <p class="section-sub">Science is where memorising facts fails fastest. The goal here is explanations you can actually reason with.</p>
+
+          <div class="placeholder-box">
+            <strong>Science lessons aren't available yet</strong>
+            <p>When they arrive, you'll be asked to explain things in your own words — not just pick an option.</p>
+
+            <div class="plan-list">
+              <div>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Biology, chemistry and physics fundamentals
+              </div>
+              <div>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Explanations that connect to things you already know
+              </div>
+              <div>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Nature and the everyday world, explained properly
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ MATH & LOGIC ============ -->
+      <section class="view" id="view-math">
+        <div class="coming-hero">
+          <div class="coming-icon">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><circle cx="12" cy="6" r="1.6"></circle><circle cx="12" cy="18" r="1.6"></circle></svg>
+          </div>
+          <h1>Math &amp; Logic</h1>
+          <p class="coming-sub">Numbers, patterns, proofs — and reasoning that holds up when you check it twice.</p>
+          <span class="pill">Coming soon</span>
+        </div>
+
+        <div class="section-card">
+          <div class="section-head">
+            <h2>What's planned</h2>
+            <span class="pill soft">Not started</span>
+          </div>
+          <p class="section-sub">Maths is the clearest test of whether you actually understand something. Here, "I got the right answer" won't be enough — you'll need to know why.</p>
+
+          <div class="placeholder-box">
+            <strong>Maths lessons aren't available yet</strong>
+            <p>Planned approach: short problems, worked reasoning, and review that comes back to the ones that tripped you up.</p>
+
+            <div class="plan-list">
+              <div>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Number sense and mental arithmetic
+              </div>
+              <div>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Patterns, proofs and structured reasoning
+              </div>
+              <div>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Problems that make you think instead of guess
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ HUMANITIES & WORLD ============ -->
+      <section class="view" id="view-humanities">
+        <div class="coming-hero">
+          <div class="coming-icon">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+          </div>
+          <h1>Humanities &amp; World</h1>
+          <p class="coming-sub">History, geography, literature and philosophy — the ideas that shaped the world you're living in.</p>
+          <span class="pill">Coming soon</span>
+        </div>
+
+        <div class="section-card">
+          <div class="section-head">
+            <h2>What's planned</h2>
+            <span class="pill soft">Not started</span>
+          </div>
+          <p class="section-sub">Knowing dates and names is easy to forget. Knowing why things happened, and what it changed, is what lasts.</p>
+
+          <div class="placeholder-box">
+            <strong>Humanities lessons aren't available yet</strong>
+            <p>These subjects will lean on explanation and argument, so the review system will ask you to reconstruct ideas, not recite them.</p>
+
+            <div class="plan-list">
+              <div>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                History and geography with actual context
+              </div>
+              <div>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Literature and philosophy, without the jargon
+              </div>
+              <div>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                How to build an argument and spot a weak one
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ GAMES & PROBLEM SOLVING ============ -->
+      <section class="view" id="view-games">
+        <div class="coming-hero">
+          <div class="coming-icon">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-3a2 2 0 1 0-4 0H9a1 1 0 0 0-1 1v3a2 2 0 1 0 0 4v3a1 1 0 0 0 1 1h3a2 2 0 1 1 4 0h3a1 1 0 0 0 1-1v-3a2 2 0 1 0 0-4V8a1 1 0 0 0-1-1z"></path></svg>
+          </div>
+          <h1>Games &amp; Problem Solving</h1>
+          <p class="coming-sub">Puzzles, strategy and challenges that make you think — not ones that just keep you tapping.</p>
+          <span class="pill">Coming soon</span>
+        </div>
+
+        <div class="section-card">
+          <div class="section-head">
+            <h2>What's planned</h2>
+            <span class="pill soft">Not started</span>
+          </div>
+          <p class="section-sub">This one sits closest to the line Knoodle doesn't want to cross. Games will only go in if they teach you something.</p>
+
+          <div class="placeholder-box">
+            <strong>No games yet — on purpose</strong>
+            <p>We're not adding anything just to make the app moreish. If it doesn't make you better at thinking, it doesn't ship.</p>
+
+            <div class="plan-list">
+              <div>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Logic puzzles with more than one route to the answer
+              </div>
+              <div>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Strategy and decision-making under constraints
+              </div>
+              <div>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Problems where the obvious answer is the wrong one
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -820,16 +1159,34 @@
     const navItems = document.querySelectorAll('.nav-item');
     const views = document.querySelectorAll('.view');
 
+    function setView(target) {
+      navItems.forEach(nav => {
+        nav.classList.toggle('active', nav.getAttribute('data-target') === target);
+      });
+      views.forEach(view => {
+        view.classList.toggle('active', view.id === 'view-' + target);
+      });
+
+      // on mobile the nav scrolls sideways — keep the active tab visible
+      if (window.innerWidth <= 768) {
+        const activeNav = document.querySelector('.nav-item[data-target="' + target + '"]');
+        if (activeNav && activeNav.scrollIntoView) {
+          activeNav.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+        }
+      }
+    }
+
     navItems.forEach(item => {
       item.addEventListener('click', () => {
-        navItems.forEach(nav => nav.classList.remove('active'));
-        item.classList.add('active');
+        setView(item.getAttribute('data-target'));
+      });
+    });
 
-        const target = item.getAttribute('data-target');
-        views.forEach(view => {
-          view.classList.remove('active');
-          if (view.id === `view-${target}`) view.classList.add('active');
-        });
+    // home-page subject tiles jump to their tab
+    document.querySelectorAll('.subject-tile[data-target]').forEach(tile => {
+      tile.addEventListener('click', () => {
+        setView(tile.getAttribute('data-target'));
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       });
     });
 
