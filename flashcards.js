@@ -15,8 +15,8 @@
    no idea). At the end Knoodle shows how well your gut matched reality.
    No points, no streaks. Wrong answers come back a few cards later.
 
-   Progress lives in localStorage per user (see `store`). To sync it to
-   Supabase later, only `store.load` / `store.save` need to change.
+   Progress currently lives in browser localStorage per user (see `store`).
+   It is not cloud-synced to Supabase yet.
    ========================================================================== */
 (function () {
   'use strict';
@@ -26,17 +26,89 @@
   var KNOWN_BOX = 4;                          // box >= 4 counts as "known"
   var KEY = 'knoodle-progress-v1-';
 
-  var root, uid = 'anon', decks = {}, deckId = null, S = null;
+  var root, uid = 'anon', sessionUid = null, decks = {}, deckId = null, S = null;
 
-  /* ---------- progress store ---------- */
+  /* ---------- progress store: local cache + Supabase cloud sync ---------- */
+  var syncTimer = null;
   var store = {
     data: {},
-    load: function (id) {
-      try { this.data = JSON.parse(localStorage.getItem(KEY + id)) || {}; } catch (e) { this.data = {}; }
+    load: async function (id) {
+      var parsed = {};
+      try {
+        var raw = JSON.parse(localStorage.getItem(KEY + id) || '{}');
+        if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
+          Object.keys(raw).forEach(function (wordId) {
+            var r = raw[wordId];
+            if (!r || typeof r !== 'object' || Array.isArray(r)) return;
+            var b = Number(r.b), d = Number(r.d);
+            if (!Number.isFinite(b) || !Number.isFinite(d)) return;
+            parsed[wordId] = {
+              b: Math.max(0, Math.min(6, Math.floor(b))),
+              s: Number.isFinite(Number(r.s)) ? Math.max(0, Math.floor(Number(r.s))) : 0,
+              l: Number.isFinite(Number(r.l)) ? Math.max(0, Math.floor(Number(r.l))) : 0,
+              d: d, t: Number.isFinite(Number(r.t)) ? Number(r.t) : 0
+            };
+          });
+        }
+      } catch (e) { parsed = {}; }
+
+      if (id && id !== 'anon' && typeof supabaseClient !== 'undefined') {
+        try {
+          var result = await supabaseClient.from('user_flashcard_progress')
+            .select('word_id,box,streak,lapses,due_at,updated_at').eq('user_id', id);
+          if (result.error) throw result.error;
+          (result.data || []).forEach(function (row) {
+            var cloud = { b: Number(row.box) || 0, s: Number(row.streak) || 0,
+              l: Number(row.lapses) || 0, d: new Date(row.due_at).getTime(),
+              t: new Date(row.updated_at).getTime() };
+            if (!Number.isFinite(cloud.d)) return;
+            if (!parsed[row.word_id] || cloud.t > parsed[row.word_id].t) parsed[row.word_id] = cloud;
+          });
+          this.data = parsed;
+          this.writeLocal();
+          await this.syncCloud(id); // migrate local-only records and merge cloud records
+          window.KNOODLE_CLOUD_SYNC = 'synced';
+        } catch (e) {
+          console.warn('Knoodle cloud progress unavailable; using this device copy.', e);
+          this.data = parsed;
+          window.KNOODLE_CLOUD_SYNC = 'offline';
+        }
+      } else {
+        this.data = parsed;
+        window.KNOODLE_CLOUD_SYNC = 'local-only';
+      }
+    },
+    writeLocal: function () {
+      try { localStorage.setItem(KEY + uid, JSON.stringify(this.data)); }
+      catch (e) { console.warn('Knoodle could not save progress locally.', e); }
+    },
+    toRows: function (id) {
+      return Object.keys(this.data).map(function (wordId) {
+        var r = this.data[wordId];
+        return { user_id: id, word_id: wordId, box: r.b, streak: r.s, lapses: r.l,
+          due_at: new Date(r.d).toISOString(), updated_at: new Date(r.t || Date.now()).toISOString() };
+      }, this);
+    },
+    syncCloud: async function (id) {
+      if (!id || id === 'anon' || typeof supabaseClient === 'undefined') return;
+      var rows = this.toRows(id);
+      if (!rows.length) return;
+      var result = await supabaseClient.from('user_flashcard_progress')
+        .upsert(rows, { onConflict: 'user_id,word_id' });
+      if (result.error) throw result.error;
     },
     save: function () {
-      try { localStorage.setItem(KEY + uid, JSON.stringify(this.data)); } catch (e) {}
+      this.writeLocal();
       try { window.dispatchEvent(new Event('knoodle:progress')); } catch (e) {}
+      if (uid === 'anon' || typeof supabaseClient === 'undefined') return;
+      clearTimeout(syncTimer);
+      syncTimer = setTimeout(function () {
+        store.syncCloud(uid).then(function () { window.KNOODLE_CLOUD_SYNC = 'synced'; })
+          .catch(function (e) {
+            window.KNOODLE_CLOUD_SYNC = 'pending';
+            console.warn('Knoodle cloud sync failed; local progress is safe.', e);
+          });
+      }, 500);
     }
   };
 
@@ -56,7 +128,10 @@
     return String(s).toLowerCase().replace(/[’‘`]/g, "'").replace(/œ/g, 'oe').replace(/æ/g, 'ae')
       .replace(/[.,;:!?¿¡"“”«»]/g, ' ').replace(/-/g, ' ').replace(/\s+/g, ' ').trim();
   }
-  function prep(s, fr) { s = norm(s); return fr ? s : s.replace(/^(the|a|an) /, ''); }
+  function prep(s, fr) {
+    s = norm(s == null ? '' : s);
+    return fr ? s : s.replace(/^(the|a|an) /, '');
+  }
   function lev(a, b) {
     var m = a.length, n = b.length, d = [], i, j;
     for (i = 0; i <= m; i++) d[i] = [i];
@@ -67,9 +142,13 @@
   }
   function enVariants(en) {
     var out = [];
+    function add(value) {
+      value = String(value || '').replace(/[()]/g, '').replace(/\s+/g, ' ').trim();
+      if (value && out.indexOf(value) === -1) out.push(value);
+    }
     en.split(/\s*\/\s*/).forEach(function (p) {
-      out.push(p.replace(/\s*\([^)]*\)/g, ''));
-      out.push(p.replace(/[()]/g, ''));
+      add(p.replace(/\s*\([^)]*\)/g, ''));
+      add(p);
     });
     return out;
   }
@@ -94,7 +173,7 @@
       if (a === n) return { r: 'ok' };
       if (strip(a) === strip(n)) { best = { r: 'close', msg: 'Right word — mind the accents.' }; continue; }
       if (o.fr && o.noun) {
-        var na = n.replace(/^(le|la|les|un|une|l') ?/, '');
+        var na = n.replace(/^(le|la|les|un|une|des|l') ?/, '');
         if (a === na || strip(a) === strip(na)) { best = { r: 'close', msg: 'Include the article — it tells you the gender.' }; continue; }
       }
       if (best.r === 'bad' && n.length >= 5 && lev(strip(a), strip(n)) <= 1) best = { r: 'close', msg: 'So close — just a tiny typo.' };
@@ -109,12 +188,18 @@
       s.words.forEach(function (r) {
         var o = r[4] || {}, fr = r[0];
         var g = o.g || (/^(le|un)\s/i.test(fr) ? 'm' : /^(la|une)\s/i.test(fr) ? 'f' : null);
+        // Plural articles (les/des) are nouns too, even though they do not
+        // reveal grammatical gender. Keep noun detection separate from gender.
+        var hasArticle = /^(le|la|les|un|une|des)\s|^l['’]/i.test(fr);
+        var pos = o.pos || (hasArticle ? 'n' : s.pos || 'p');
+        var englishAnswers = enVariants(r[1]);
         var w = {
           id: o.id || (s.id + ':' + fr), sec: s.id, secTitle: s.title, trap: s.flag === 'trap',
-          fr: fr, en: r[1], enMain: r[1].split(/\s*\/\s*/)[0], enAcc: enVariants(r[1]),
-          frAcc: [fr].concat(o.altFr || []), exFr: r[2], exEn: r[3], note: o.note, g: g, noun: !!g, cloze: null
+          fr: fr, en: r[1], enMain: (englishAnswers[0] || r[1]).trim(), enAcc: englishAnswers,
+          frAcc: [fr].concat(o.altFr || []), exFr: r[2], exEn: r[3], note: o.note,
+          g: g, noun: pos === 'n' || hasArticle, pos: pos, cloze: null
         };
-        var base = fr.replace(/^(?:(?:le|la|les|un|une)\s+|l['’])/i, '');
+        var base = fr.replace(/^(?:(?:le|la|les|un|une|des)\s+|l['’])/i, '');
         [o.cloze, base, fr].some(function (t) {
           if (!t) return false;
           var re = new RegExp('(^|[^\\p{L}])(' + t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')(?![\\p{L}])', 'iu');
@@ -143,9 +228,9 @@
     var c = { known: 0, shaky: 0, fresh: 0, due: 0 }, now = Date.now();
     ws.forEach(function (w) {
       var r = store.data[w.id];
-      if (!r) { c.fresh++; return; }
-      if (r.b >= KNOWN_BOX) c.known++; else c.shaky++;
-      if (r.d <= now) c.due++;
+      if (!r || typeof r !== 'object') { c.fresh++; return; }
+      if (Number(r.b) >= KNOWN_BOX) c.known++; else c.shaky++;
+      if (Number(r.d) <= now) c.due++;
     });
     return c;
   }
@@ -221,7 +306,8 @@
     } else h += '<div class="kf-deckname">' + esc(d.name) + '</div>';
     h += '<div class="kf-stats"><div class="kf-stat k"><b>' + all.known + '</b>known</div><div class="kf-stat s"><b>' + all.shaky + '</b>shaky</div><div class="kf-stat d"><b>' + all.due + '</b>due</div><div class="kf-stat n"><b>' + all.fresh + '</b>new</div></div>';
     h += '<button type="button" class="kf-btn" data-act="start">' + (n ? 'Start a session · ' + n + ' cards (~' + Math.max(2, Math.round(n * 0.4)) + ' min)' : 'Extra practice on shaky words') + '</button>';
-    h += '<p class="kf-fine">A word counts as <b>known</b> only after you have recalled it several times, on different days, in different ways. Seeing it once isn\'t enough.</p></div>';
+    h += '<p class="kf-fine">A word counts as <b>known</b> only after you have recalled it several times, on different days, in different ways. Seeing it once isn\'t enough.</p>' +
+      '<p class="kf-fine">Progress is currently saved in this browser on this device.</p></div>';
     h += '<div class="kf-card"><div class="kf-h2">Topics</div>';
     d.sections.forEach(function (s) {
       var c = counts(d.words.filter(function (w) { return w.sec === s.id; })), t = c.known + c.shaky + c.fresh || 1;
@@ -239,7 +325,7 @@
   function startSession(secId) {
     var items = pick(secId);
     if (!items.length) { renderHome(); return; }
-    S = { q: items, i: 0, log: [], secId: secId };
+    S = { q: items, i: 0, log: [], secId: secId, total: items.length, completed: 0, endedEarly: false };
     show();
   }
   function cur() { return S.q[S.i]; }
@@ -264,8 +350,13 @@
   }
 
   function top() {
-    var pct = Math.round(S.i / S.q.length * 100);
-    return '<div class="kf-top"><button type="button" class="kf-link" data-act="end">✕ End session</button><div class="kf-prog"><i style="width:' + pct + '%"></i></div><span class="kf-fine">' + Math.min(S.i + 1, S.q.length) + '/' + S.q.length + '</span></div>';
+    var it = cur();
+    var total = S.total || S.q.length;
+    var done = Math.min(S.completed || 0, total);
+    var pct = Math.round(done / Math.max(total, 1) * 100);
+    // Retry cards do not inflate the advertised session size or progress count.
+    var shown = it && it.retry ? done : (it && it.stage === 'fb' ? done : Math.min(done + 1, total));
+    return '<div class="kf-top"><button type="button" class="kf-link" data-act="end">✕ End session</button><div class="kf-prog"><i style="width:' + pct + '%"></i></div><span class="kf-fine">' + shown + '/' + total + '</span></div>';
   }
 
   function render() {
@@ -325,7 +416,7 @@
   function finish(it, r, msg, typed) {
     it.res = r; it.msg = msg || ''; it.typed = typed || ''; it.stage = 'fb';
     grade(it, r);
-    if (!it.retry) S.log.push(it);
+    if (!it.retry) { S.log.push(it); S.completed = (S.completed || 0) + 1; }
     if (r === 'bad' && !it.retry) {
       it.rt = { w: it.w, mode: 'recog', retry: true };
       S.q.splice(Math.min(S.i + 4, S.q.length), 0, it.rt);
@@ -334,6 +425,13 @@
   }
   function submit(giveUp) {
     var it = cur(), w = it.w, inp = root.querySelector('#kf-in'), typed = inp ? inp.value : '';
+    if (!giveUp && !it.gut) {
+      var hintEl = root.querySelector('#kf-hint');
+      if (hintEl) hintEl.textContent = 'Choose your gut feeling first — then check your answer.';
+      var firstGut = root.querySelector('[data-act="gut"]');
+      if (firstGut) firstGut.focus();
+      return;
+    }
     var fr = it.mode !== 'fr2en';
     var acc = it.mode === 'cloze' ? [w.cloze.ans] : fr ? w.frAcc : w.enAcc;
     var c = giveUp ? { r: 'bad' } : check(typed, acc, { fr: fr, noun: w.noun && it.mode === 'en2fr' });
@@ -354,10 +452,12 @@
 
   /* ---------- summary ---------- */
   function renderSummary() {
-    var log = S.log, ok = 0, bad = [], g = { sureOk: 0, sureBad: 0, noneOk: 0, noneBad: 0 }, rated = 0;
+    var log = S.log, exact = 0, close = [], bad = [];
+    var g = { sureOk: 0, sureBad: 0, noneOk: 0, noneBad: 0 }, rated = 0;
     log.forEach(function (it) {
-      if (it.res === 'ok') ok++;
-      if (it.res === 'bad') bad.push(it.w);
+      if (it.res === 'ok') exact++;
+      else if (it.res === 'close') close.push(it.w);
+      else if (it.res === 'bad') bad.push(it.w);
       if (it.gut === 'sure' || it.gut === 'none') {
         rated++;
         g[(it.gut === 'sure' ? 'sure' : 'none') + (it.res === 'ok' ? 'Ok' : 'Bad')]++;
@@ -365,15 +465,25 @@
     });
     var nextD = Infinity;
     log.forEach(function (it) { var r = store.data[it.w.id]; if (r && r.d < nextD) nextD = r.d; });
-    var h = '<div class="kf"><div class="kf-card"><div class="kf-title">Session done</div>';
+    var h = '<div class="kf"><div class="kf-card"><div class="kf-title">' + (S.endedEarly ? 'Session ended' : 'Session complete') + '</div>';
+    if (S.endedEarly && log.length < S.total) h += '<p class="kf-muted">You completed ' + log.length + ' of ' + S.total + ' original cards before ending the session.</p>';
     if (!log.length) h += '<p class="kf-muted">No cards answered this time.</p>';
     else {
-      h += '<p class="kf-muted">You recalled <b>' + ok + ' of ' + log.length + '</b> on the first try.</p>';
+      h += '<p class="kf-muted"><b>' + exact + ' of ' + log.length + '</b> answers were exact on the first try.';
+      if (close.length) h += ' ' + close.length + ' were nearly right.';
+      if (bad.length) h += ' ' + bad.length + ' need another look.';
+      h += '</p>';
+      if (close.length) {
+        h += '<div class="kf-h2">Nearly there — check these details</div>';
+        close.forEach(function (w) { h += '<div class="kf-slip"><span>' + frHtml(w) + '</span><span class="kf-muted">' + esc(w.enMain) + '</span></div>'; });
+        h += '<p class="kf-fine">These were close, but something small was missing — for example an accent, article or spelling detail.</p>';
+      }
       if (bad.length) {
-        h += '<div class="kf-h2">Slipping — worth another look</div>';
+        h += '<div class="kf-h2">Not proven yet — worth another look</div>';
         bad.forEach(function (w) { h += '<div class="kf-slip"><span>' + frHtml(w) + '</span><span class="kf-muted">' + esc(w.enMain) + '</span></div>'; });
         h += '<p class="kf-fine">These will return in a few minutes, and again after that.</p>';
-      } else h += '<p class="kf-muted">Nothing slipped. Nice.</p>';
+      }
+      if (!close.length && !bad.length) h += '<p class="kf-muted">Every answer was exact. Nice work.</p>';
       if (rated >= 3) {
         h += '<div class="kf-h2">How well do you know what you know?</div>';
         if (g.sureBad) h += '<div class="kf-gutmsg">You felt sure about ' + g.sureBad + ' word' + (g.sureBad > 1 ? 's' : '') + ' you actually missed. Feeling familiar isn\'t the same as knowing.</div>';
@@ -396,7 +506,7 @@
     else if (a === 'deck') { deckId = b.getAttribute('data-id'); renderHome(); }
     else if (a === 'start') startSession(b.getAttribute('data-sec') || null);
     else if (a === 'home') renderHome();
-    else if (a === 'end') { if (S && S.log.length) renderSummary(); else renderHome(); }
+    else if (a === 'end') { if (S && S.log.length) { S.endedEarly = true; renderSummary(); } else renderHome(); }
     else if (!S) return;
     else if (a === 'test') { var it = cur(); it.mode = 'recog'; it.stage = 'ask'; prepAsk(it); render(); }
     else if (a === 'opt') chooseOpt(+b.getAttribute('data-i'));
@@ -462,19 +572,28 @@
     renderHome();
   }
   function mount(el, userId) {
-    root = el; uid = userId || 'anon';
+    root = el;
+    var nextUid = userId || 'anon';
+    if (sessionUid && sessionUid !== nextUid) S = null;
+    uid = nextUid;
+    sessionUid = uid;
     if (!document.getElementById('kf-css')) {
       var st = document.createElement('style'); st.id = 'kf-css'; st.textContent = CSS; document.head.appendChild(st);
     }
-    store.load(uid);
     root.onclick = onClick; root.onkeydown = onKey;
-    if (S) return;                       // a session is running: don't reset it when the tab is re-opened
-    if (window.KNOODLE_VOCAB) { init(); return; }
-    root.innerHTML = '<div class="kf"><div class="kf-card kf-muted">Loading vocabulary…</div></div>';
+    root.innerHTML = '<div class="kf"><div class="kf-card kf-muted">Loading your progress…</div></div>';
+    store.load(uid).then(function () {
+      if (S) { render(); return; }       // resume the current session in the mounted container
+      if (window.KNOODLE_VOCAB) { init(); return; }
+      root.innerHTML = '<div class="kf"><div class="kf-card kf-muted">Loading vocabulary…</div></div>';
     var s = document.createElement('script'); s.src = 'vocab.js';
     s.onload = init;
     s.onerror = function () { root.innerHTML = '<div class="kf"><div class="kf-card">Couldn\'t load the vocabulary. Check your connection and <button type="button" class="kf-btn kf-sm" onclick="Knoodle.Flash.mount(document.getElementById(\'flashApp\'),window.KNOODLE_USER_ID)">try again</button></div></div>'; };
     document.head.appendChild(s);
+    }).catch(function (e) {
+      console.warn('Progress loading failed; continuing with local progress.', e);
+      init();
+    });
   }
 
   window.Knoodle = window.Knoodle || {};
