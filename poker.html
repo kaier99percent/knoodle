@@ -798,8 +798,8 @@
       state.toAct = -1;
 
       logEvent('--- New Hand ---');
-      logEvent(`${players[sbI].name} post${players[sbI].isAI ? 's' : ''} SB (${state.sb})`);
-      logEvent(`${players[bbI].name} post${players[bbI].isAI ? 's' : ''} BB (${state.bb})`);
+      logEvent(`${players[sbI].name} post${players[sbI].name == "You" ? '' : 's'} SB (${state.sb})`);
+      logEvent(`${players[bbI].name} post${players[bbI].name == "You" ? '' : 's'} BB (${state.bb})`);
       updateUI();
       sched(nextTurn, 1000);
     }
@@ -903,13 +903,13 @@
 
       if (type === 'fold') {
         p.folded = true; p.status = 'Fold';
-        logEvent(`${p.name} folds.`); AudioFX.play('fold');
+        logEvent(`${p.name} fold${p.name == "You" ? '' : 's'}.`); AudioFX.play('fold');
       } else if (type === 'check' || type === 'call') {
         placeBet(p, toCall);
         if (toCall > 0) {
           p.status = p.allIn ? 'All-in' : 'Call ' + toCall;
-          logEvent(`${p.name} calls ${toCall}${p.allIn ? ' (all-in)' : ''}.`);
-        } else { p.status = 'Check'; logEvent(`${p.name} checks.`); }
+          logEvent(`${p.name} call${p.name == "You" ? '' : 's'} ${toCall}${p.allIn ? ' (all-in)' : ''}.`);
+        } else { p.status = 'Check'; logEvent(`${p.name} check${p.name == "You" ? '' : 's'}.`); }
       } else {
         const fullRaise = raiseTo - state.currentBet >= state.minRaise;
         placeBet(p, raiseTo - p.bet);
@@ -920,7 +920,7 @@
         }
         state.currentBet = Math.max(state.currentBet, p.bet);
         p.status = p.allIn ? 'All-in' : 'Raise ' + raiseTo;
-        logEvent(`${p.name} raises to ${raiseTo}${p.allIn ? ' (all-in)' : ''}.`);
+        logEvent(`${p.name} raise${p.name == "You" ? '' : 's'} to ${raiseTo}${p.allIn ? ' (all-in)' : ''}.`);
       }
     }
 
@@ -1087,7 +1087,7 @@
       state.finalPot = pot;
       players.forEach(p => { p.bet = 0; p.totalBet = 0; });
       recordStats(w.id === 'you', pot);
-      logEvent(`${w.name} wins ${pot} chips.`);
+      logEvent(`${w.name}${w.name == "You" ? " win" : " wins"} ${pot} chips.`);
 
       if (w.isAI) say(w, pick(aiChats[w.id].win));
 
