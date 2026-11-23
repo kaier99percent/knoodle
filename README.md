@@ -1,7 +1,6 @@
-# Knoodle
-<img width="595" height="450" alt="截屏2026-10-24 19 09 35" src="https://github.com/user-attachments/assets/b95389ae-9b8a-4000-b34e-1fcd620ef70e" />
-
 # Knoodle — The Learning Platform
+
+<img width="364" height="107" alt="image" src="https://github.com/user-attachments/assets/3616667d-df0f-4bf7-8a4d-c8146647909a" />
 *Learn it. Know it. Knoodle it.*
 
 “Education is not the learning of facts, but the training of the mind to think.” — Often attributed to Albert Einstein
