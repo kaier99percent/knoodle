@@ -1,9 +1,9 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="light">
+  <!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login — Knoodle</title>
+  <title>Knoodle - Sign In</title>
   
   <link rel="icon" type="image/png" href="icon.png">
 
@@ -18,77 +18,75 @@
     } catch (e) {}
   </script>
 
-  <!-- Knoodle Font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Share+Tech&display=swap" rel="stylesheet">
 
   <style>
-    /* --- Theme --- */
     :root[data-theme="light"] {
-      --bg: #fef8f0; --surface: #fffdf8; --text-main: #4a3f38;
-      --text-muted: #9b8877; --border: #f0e4d4; --primary: #dd7860;
-      --primary-hover: #b85a44; --primary-light: #fce8dc; --icon-border: #e8c9b8;
-      --card-shadow: 0 6px 20px rgba(200, 140, 100, 0.08);
-      --btn-text: #ffffff;
-      --input-bg: #fffdf8;
+      --bg-base: #F7F8F0;
+      --surface: #ffffff;
+      --text-main: #355872;
+      --text-muted: #5a7d9a;
+      --border: #7AAACE;
+      --accent: #355872;
+      --accent-hover: #24425c;
+      --highlight: #9CD5FF;
+      --error: #c94f4f;
     }
 
     :root[data-theme="dark"] {
-      --bg: #1a1816; --surface: #24211e; --text-main: #f0ebe1;
-      --text-muted: #9c9691; --border: #3a342f; --primary: #e68b73;
-      --primary-hover: #f2a38d; --primary-light: #3a2a24; --icon-border: #4a3830;
-      --card-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
-      --btn-text: #1a1816;
-      --input-bg: #1a1816;
-    }
-
-    :root {
-      --radius-a: 16px 20px 18px 22px;
-      --radius-b: 20px 16px 22px 18px;
-      --radius-c: 18px 22px 16px 20px;
+      --bg-base: #1a222a;
+      --surface: #243140;
+      --text-main: #F7F8F0;
+      --text-muted: #9CD5FF;
+      --border: #355872;
+      --accent: #9CD5FF;
+      --accent-hover: #7AAACE;
+      --highlight: #355872;
+      --error: #ff6b6b;
     }
 
     * { 
       box-sizing: border-box; 
+      margin: 0;
+      padding: 0;
       transition: background-color 0.3s, border-color 0.3s, color 0.3s;
     }
 
     body {
-      margin: 0;
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 24px;
-      font-family: 'Nunito', system-ui, sans-serif;
-      background-color: var(--bg);
-      color: var(--text-main);
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--bg-base);
       background-image: 
-        radial-gradient(circle at 20% 10%, rgba(221, 120, 96, 0.04) 0, transparent 40%),
-        radial-gradient(circle at 80% 80%, rgba(127, 176, 105, 0.04) 0, transparent 40%),
-        linear-gradient(rgba(177, 202, 210, 0.08) 1px, transparent 1px);
-      background-size: auto, auto, 100% 34px;
+        radial-gradient(circle at 10% 10%, var(--highlight) 0%, transparent 40%),
+        radial-gradient(circle at 90% 90%, var(--border) 0%, transparent 40%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      -webkit-font-smoothing: antialiased;
     }
 
     .card {
       width: 100%;
-      max-width: 420px;
+      max-width: 440px;
       padding: 40px;
       background: var(--surface);
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius-b);
-      box-shadow: var(--card-shadow);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(53, 88, 114, 0.1);
       position: relative;
     }
 
-    /* Theme Toggle Button */
     .theme-toggle {
       position: absolute;
       top: 20px;
       right: 20px;
-      background: var(--bg);
-      border: 1.5px solid var(--border);
+      background: var(--bg-base);
+      border: 1px solid var(--border);
       color: var(--text-main);
       width: 36px;
       height: 36px;
@@ -99,156 +97,186 @@
       justify-content: center;
       transition: all 0.2s;
     }
+
     .theme-toggle:hover {
-      border-color: var(--primary);
-      color: var(--primary);
-      transform: rotate(15deg);
+      border-color: var(--accent);
+      color: var(--accent);
     }
-    
 
     .logo {
       display: inline-flex;
       align-items: center;
       gap: 10px;
       font-size: 26px;
-      font-weight: 850;
+      font-weight: 800;
       letter-spacing: -0.5px;
       color: var(--text-main);
       text-decoration: none;
     }
-    .logo img { width: 32px; height: 32px; border-radius: 8px; }
 
-    h1 { margin: 24px 0 8px; font-size: 28px; font-weight: 850; color: var(--text-main); }
-    .subtitle { color: var(--text-muted); font-weight: 600; margin-bottom: 26px; font-size: 15px; }
+    .logo img { 
+      width: 32px; 
+      height: 32px; 
+      border-radius: 8px; 
+    }
 
-    .tabs { display: flex; gap: 10px; margin-bottom: 25px; }
+    h1 { 
+      margin: 24px 0 8px; 
+      font-size: 28px; 
+      font-weight: 700; 
+    }
+
+    .subtitle { 
+      color: var(--text-muted); 
+      font-weight: 500; 
+      margin-bottom: 24px; 
+      font-size: 15px; 
+    }
+
+    .tabs { 
+      display: flex; 
+      gap: 8px; 
+      margin-bottom: 24px; 
+    }
 
     .tabs button {
       flex: 1;
       padding: 12px;
-      border: 1.5px solid var(--border);
-      border-radius: 30px;
-      background: var(--bg);
-      color: var(--text-main);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--bg-base);
+      color: var(--text-muted);
       cursor: pointer;
-      font-family: inherit;
-      font-size: 15px;
-      font-weight: 700;
+      font-family: 'Share Tech', monospace;
+      font-size: 16px;
+      text-transform: uppercase;
       transition: all 0.2s;
     }
 
     .tabs button.active {
-      background: var(--primary);
-      color: var(--btn-text);
-      border-color: var(--primary);
+      background: var(--accent);
+      color: var(--bg-base);
+      border-color: var(--accent);
+      font-weight: bold;
     }
 
     label { 
       display: block; 
-      margin: 16px 0 7px; 
-      font-size: 13px; 
-      font-weight: 800; 
+      margin: 16px 0 8px; 
+      font-family: 'Share Tech', monospace;
+      font-size: 14px; 
       color: var(--text-muted);
       text-transform: uppercase;
-      letter-spacing: 0.5px;
     }
 
     input {
       width: 100%;
       padding: 14px;
-      border: 2px solid var(--border);
-      border-radius: var(--radius-c);
+      border: 1px solid var(--border);
+      border-radius: 6px;
       font-size: 16px;
-      font-family: inherit;
-      font-weight: 600;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 500;
       color: var(--text-main);
-      background: var(--input-bg);
+      background: var(--bg-base);
       outline: none;
-      transition: border-color 0.2s;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
 
-    input:focus { border-color: var(--primary); }
-    input::placeholder { color: var(--text-muted); opacity: 0.6; }
+    input:focus { 
+      border-color: var(--accent); 
+      box-shadow: 0 0 0 2px var(--highlight);
+    }
+
+    input::placeholder { 
+      color: var(--text-muted); 
+      opacity: 0.5; 
+    }
 
     .submit {
       width: 100%;
       padding: 16px;
-      margin-top: 30px;
+      margin-top: 24px;
       border: none;
-      border-radius: var(--radius-a);
-      background: var(--primary);
-      color: var(--btn-text);
+      border-radius: 6px;
+      background: var(--accent);
+      color: var(--bg-base);
       font-size: 16px;
-      font-family: inherit;
-      font-weight: 800;
+      font-family: 'Share Tech', monospace;
+      text-transform: uppercase;
       cursor: pointer;
-      box-shadow: 0 4px 14px rgba(221, 120, 96, 0.3);
       transition: all 0.2s;
     }
 
-    .submit:hover { background: var(--primary-hover); transform: translateY(-2px); }
-    .submit:disabled { opacity: 0.6; cursor: wait; transform: none; box-shadow: none; }
+    .submit:hover { 
+      background: var(--accent-hover); 
+    }
+
+    .submit:disabled { 
+      opacity: 0.6; 
+      cursor: wait; 
+    }
 
     #message {
       margin-top: 20px;
       font-size: 14px;
-      font-weight: 600;
+      font-weight: 500;
       line-height: 1.5;
-      overflow-wrap: anywhere;
       text-align: center;
-      color: var(--primary);
+      color: var(--accent);
     }
 
     .back { 
       display: block; 
-      margin-top: 30px; 
+      margin-top: 24px; 
       text-align: center; 
       color: var(--text-muted); 
       text-decoration: none; 
       font-size: 14px;
-      font-weight: 700;
       transition: color 0.2s;
     }
-    .back:hover { color: var(--primary); text-decoration: underline; }
 
-    /* --- NEW: Legal links --- */
+    .back:hover { 
+      color: var(--accent); 
+      text-decoration: underline; 
+    }
+
     .legal-footer {
       margin-top: 24px;
       padding-top: 20px;
-      border-top: 1px dashed var(--border);
+      border-top: 1px solid var(--bg-base);
       display: flex;
       justify-content: center;
       align-items: center;
       gap: 8px;
-      flex-wrap: wrap;
-      font-size: 12px;
+      font-family: 'Share Tech', monospace;
+      font-size: 13px;
     }
 
     .legal-footer a {
       color: var(--text-muted);
       text-decoration: none;
-      font-weight: 700;
       transition: color 0.2s;
     }
 
     .legal-footer a:hover {
-      color: var(--primary);
+      color: var(--accent);
       text-decoration: underline;
     }
 
     .legal-footer .dot {
       color: var(--text-muted);
       opacity: 0.5;
-      font-weight: 400;
     }
 
-    /* --- NEW: Password Toggle & Checkbox Styles --- */
     .password-wrapper {
       position: relative;
     }
+
     .password-wrapper input {
       padding-right: 45px;
     }
+
     .toggle-password {
       position: absolute;
       right: 14px;
@@ -261,8 +289,9 @@
       display: flex;
       align-items: center;
     }
+
     .toggle-password:hover {
-      color: var(--primary);
+      color: var(--accent);
     }
 
     .checkbox-group {
@@ -271,27 +300,31 @@
       gap: 10px;
       margin-top: 16px;
     }
+
     .checkbox-group[hidden] {
       display: none;
     }
+
     .checkbox-group input {
       width: auto;
       margin-top: 4px;
       cursor: pointer;
     }
+
     .checkbox-group label {
       margin: 0;
       text-transform: none;
-      font-size: 13px;
-      font-weight: 600;
-      line-height: 1.4;
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
       cursor: pointer;
     }
+
     .checkbox-group a {
-      color: var(--primary);
+      color: var(--accent);
       text-decoration: none;
-      font-weight: 700;
+      font-weight: 600;
     }
+
     .checkbox-group a:hover {
       text-decoration: underline;
     }
@@ -300,34 +333,32 @@
 <body>
   <main class="card">
     
-    <!-- Theme toggle -->
     <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
-      <svg id="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-      <svg id="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+      <svg id="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+      <svg id="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
     </button>
 
     <a class="logo" href="index.html">
       <img src="icon.png" alt="Knoodle">
-      <span>knoodle.</span>
+      <span>Knoodle</span>
     </a>
 
-    <h1 id="heading">Welcome back!</h1>
-    <p class="subtitle" id="subtitle">Sign in and keep learning.</p>
+    <h1 id="heading">Sign in</h1>
+    <p class="subtitle" id="subtitle">Enter your details to access your workspace.</p>
 
     <div class="tabs">
-      <button type="button" id="loginTab" class="active">Log in</button>
-      <button type="button" id="signupTab">Create account</button>
+      <button type="button" id="loginTab" class="active">Log In</button>
+      <button type="button" id="signupTab">Sign Up</button>
     </div>
 
     <form id="authForm">
       
-      <!-- NEW FIELDSssss -->
       <div id="signupFields" hidden>
         <label for="username">Username</label>
         <input
           id="username"
           type="text"
-          placeholder="e.g. kaier99"
+          placeholder="kaier99"
           minlength="3"
           maxlength="20"
           pattern="[a-zA-Z0-9_]{3,20}"
@@ -336,26 +367,25 @@
           spellcheck="false"
         >
 
-        <label for="displayName">Display name</label>
+        <label for="displayName">Display Name</label>
         <input
           id="displayName"
           type="text"
-          placeholder="e.g. Kaier"
+          placeholder="Kaier"
           maxlength="40"
           autocomplete="nickname"
         >
       </div>
-      <!-- END new field -->
 
-      <label for="email">Email address</label>
+      <label for="email">Email</label>
       <input id="email" type="email" autocomplete="email" placeholder="you@example.com" required>
 
       <label for="password">Password</label>
       <div class="password-wrapper">
         <input id="password" type="password" autocomplete="current-password" minlength="8" placeholder="At least 8 characters" required>
         <button type="button" class="toggle-password" id="togglePassword" aria-label="Show password">
-          <svg id="eye-closed" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
-          <svg id="eye-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          <svg id="eye-closed" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+          <svg id="eye-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
         </button>
       </div>
 
@@ -364,47 +394,48 @@
         <label for="termsCheck">I agree to the <a href="terms.html" target="_blank">Terms of Service</a> and <a href="privacy.html" target="_blank">Privacy Policy</a>.</label>
       </div>
 
-      <button class="submit" id="submitButton" type="submit">Log in</button>
+      <button class="submit" id="submitButton" type="submit">Log In</button>
     </form>
 
     <p id="message" role="status" aria-live="polite"></p>
-    <a class="back" href="index.html">← Back to Knoodle</a>
+    <a class="back" href="index.html">Back to home</a>
 
-    <!-- NEW: Legal links -->
     <div class="legal-footer">
       <a href="terms.html">Terms</a>
-      <span class="dot">·</span>
+      <span class="dot">•</span>
       <a href="privacy.html">Privacy</a>
     </div>
 
   </main>
 
-  <!-- SUPABASE  -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase.js"></script>
 
   <script>
-    // --- Theme logic ---
-    var themeToggle = document.getElementById('theme-toggle');
-    var iconMoon = document.getElementById('icon-moon');
-    var iconSun = document.getElementById('icon-sun');
-    var root = document.documentElement;
+    const themeToggle = document.getElementById('theme-toggle');
+    const iconMoon = document.getElementById('icon-moon');
+    const iconSun = document.getElementById('icon-sun');
+    const root = document.documentElement;
 
     function updateIcon(theme) {
-      if (theme === 'dark') { iconMoon.style.display = 'none'; iconSun.style.display = 'block'; }
-      else { iconMoon.style.display = 'block'; iconSun.style.display = 'none'; }
+      if (theme === 'dark') { 
+        iconMoon.style.display = 'none'; 
+        iconSun.style.display = 'block'; 
+      } else { 
+        iconMoon.style.display = 'block'; 
+        iconSun.style.display = 'none'; 
+      }
     }
 
     updateIcon(root.getAttribute('data-theme'));
 
     themeToggle.addEventListener('click', function() {
-      var newTheme = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      const newTheme = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
       root.setAttribute('data-theme', newTheme);
       updateIcon(newTheme);
       try { localStorage.setItem('knoodle-theme', newTheme); } catch (e) {}
     });
 
-    // --- Password Toggle Logic ---
     const togglePassword = document.getElementById('togglePassword');
     const passwordInput = document.getElementById('password');
     const eyeOpen = document.getElementById('eye-open');
@@ -417,7 +448,6 @@
       eyeClosed.style.display = type === 'text' ? 'none' : 'block';
     });
 
-    // --- Auth logiccc ---
     const form = document.getElementById("authForm");
     const loginTab = document.getElementById("loginTab");
     const signupTab = document.getElementById("signupTab");
@@ -435,16 +465,15 @@
       loginTab.classList.toggle("active", isLogin);
       signupTab.classList.toggle("active", !isLogin);
 
-      heading.textContent = isLogin ? "Welcome back!" : "Join Knoodle!";
+      heading.textContent = isLogin ? "Sign in" : "Create account";
       subtitle.textContent = isLogin
-        ? "Sign in and keep learning."
-        : "Create your account and start learning.";
+        ? "Enter your details to access your workspace."
+        : "Enter your details to get started.";
 
-      submitButton.textContent = isLogin ? "Log in" : "Create account";
+      submitButton.textContent = isLogin ? "Log In" : "Sign Up";
       passwordInput.autocomplete = isLogin ? "current-password" : "new-password";
       message.textContent = "";
       
-      // show hide
       document.getElementById("signupFields").hidden = isLogin;
       document.getElementById("termsGroup").hidden = isLogin;
       document.getElementById("termsCheck").hidden = isLogin;
@@ -459,26 +488,23 @@
 
     setMode("login");
 
-    // --- CHECK url ---
     const params = new URLSearchParams(window.location.search);
-
     if (params.get("mode") === "signup") {
       setMode("signup");
     }
-    // ----------------------------
 
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
       message.textContent = "";
       submitButton.disabled = true;
-      submitButton.textContent = "Please wait...";
+      submitButton.textContent = "...";
 
       const email = document.getElementById("email").value.trim();
       const password = passwordInput.value;
 
       try {
         if (typeof supabaseClient === "undefined") {
-          throw new Error("Knoodle could not connect. Please check the Supabase setup.");
+          throw new Error("Database connection failed.");
         }
 
         if (mode === "signup") {
@@ -486,16 +512,14 @@
           const displayName = document.getElementById("displayName").value.trim();
 
           if (!/^[a-z0-9_]{3,20}$/.test(username)) {
-            throw new Error("Username must be 3–20 characters and use only letters, numbers, and underscores.");
+            throw new Error("Username must be 3-20 characters (letters, numbers, underscores).");
           }
 
           if (displayName.length < 1 || displayName.length > 40) {
             throw new Error("Display name must be between 1 and 40 characters.");
           }
 
-          // --- FIX 1: TIMEOUT & ERROR HANDLING ---
-          message.textContent = "Creating your account...";
-          console.log("Knoodle: signup request started");
+          message.textContent = "Creating account...";
 
           const signupPromise = supabaseClient.auth.signUp({
             email,
@@ -510,26 +534,15 @@
           });
 
           const timeoutPromise = new Promise((_, reject) => {
-            setTimeout(() => {
-              reject(new Error(
-                "The signup request is taking too long. Please check your connection and Supabase settings."
-              ));
-            }, 15000);
+            setTimeout(() => reject(new Error("Request timed out.")), 15000);
           });
 
-          const { data, error } = await Promise.race([
-            signupPromise,
-            timeoutPromise
-          ]);
-
-          console.log("Knoodle: signup response received", data);
+          const { data, error } = await Promise.race([signupPromise, timeoutPromise]);
 
           if (error) throw error;
 
-          message.textContent =
-            "Account created! Check your email for the verification link.";
-          message.style.color = "var(--primary)";
-          // ---------------------------------------
+          message.textContent = "Account created. Check your email to verify.";
+          message.style.color = "var(--accent)";
 
         } else {
           const { error } = await supabaseClient.auth.signInWithPassword({
@@ -539,23 +552,22 @@
 
           if (error) throw error;
 
-          message.textContent = "You're logged in! Redirecting...";
-          message.style.color = "var(--primary)";
+          message.textContent = "Success. Redirecting...";
+          message.style.color = "var(--accent)";
 
           setTimeout(() => {
             window.location.href = "dashboard.html";
-          }, 1000);
+          }, 800);
         }
       } catch (error) {
-        message.textContent = error.message || "Something went wrong. Please try again.";
-        message.style.color = "#d96a5c"; // Knoodle red
+        message.textContent = error.message || "An error occurred.";
+        message.style.color = "var(--error)";
       } finally {
         submitButton.disabled = false;
-        submitButton.textContent = mode === "login" ? "Log in" : "Create account";
+        submitButton.textContent = mode === "login" ? "Log In" : "Sign Up";
       }
     });
 
-    // --- Skip login if already signed in ---
     async function checkSession() {
       if (window.supabaseClient) {
         const { data } = await supabaseClient.auth.getSession();
