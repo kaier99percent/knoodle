@@ -1184,6 +1184,11 @@
       });
     });
 
+    const requestedView = new URLSearchParams(window.location.search).get('target');
+    if (requestedView && Array.from(navItems).some(item => item.getAttribute('data-target') === requestedView)) {
+      setView(requestedView);
+    }
+
     // home-page subject tiles jump to their tab
     document.querySelectorAll('.subject-tile[data-target]').forEach(tile => {
       tile.addEventListener('click', () => {
