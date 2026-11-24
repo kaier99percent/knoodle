@@ -3,223 +3,274 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Knoodle — Study Tool</title>
+  <title>Knoodle</title>
 
   <link rel="icon" type="image/png" href="icon.png">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Share+Tech&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --bg: #ffffff;
-      --text-main: #0f172a;
-      --text-muted: #475569;
-      --border: #cbd5e1;
-      --border-heavy: #0f172a;
-      --accent: #4a7cbe;
+      --bg-base: #F7F8F0;
+      --surface: #ffffff;
+      --text-main: #355872;
+      --text-muted: #5a7d9a;
+      --border: #7AAACE;
+      --accent: #355872;
+      --accent-hover: #24425c;
+      --highlight: #9CD5FF;
     }
 
-    * { 
-      box-sizing: border-box; 
-      margin: 0; 
-      padding: 0; 
-      border-radius: 0 !important; 
-      box-shadow: none !important;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
-    
+
     body {
-      font-family: 'Inter', system-ui, sans-serif;
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--bg-base);
+      background-image: 
+        radial-gradient(circle at 10% 10%, #9CD5FF 0%, transparent 40%),
+        radial-gradient(circle at 90% 90%, #7AAACE 0%, transparent 40%);
+      background-attachment: fixed;
       color: var(--text-main);
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
-      background-color: #f8fafc;
-      background-image: 
-        radial-gradient(at 0% 0%, hsla(210, 60%, 90%, 1) 0, transparent 50%),
-        radial-gradient(at 100% 0%, hsla(200, 50%, 95%, 1) 0, transparent 50%),
-        radial-gradient(at 100% 100%, hsla(210, 60%, 92%, 1) 0, transparent 50%),
-        radial-gradient(at 0% 100%, hsla(200, 50%, 96%, 1) 0, transparent 50%);
-      background-attachment: fixed;
     }
 
     h1, h2, h3 {
-      font-family: 'Space Grotesk', sans-serif;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
       color: var(--text-main);
-      line-height: 1.1;
       letter-spacing: -0.5px;
     }
 
-    a { color: var(--text-main); text-decoration: none; font-weight: 500; transition: color 0.1s; }
-    a:hover { color: var(--accent); }
-
-    /* --- ANNOUNCEMENT BAR --- */
-    .announcement {
-      background: var(--border-heavy);
-      color: #ffffff;
-      text-align: center;
-      padding: 12px 20px;
-      font-size: 13px;
-      font-weight: 500;
-      letter-spacing: 0.5px;
+    a {
+      text-decoration: none;
+      color: var(--text-main);
     }
-    .announcement a { color: #cbd5e1; text-decoration: underline; font-weight: 600; }
-    .announcement a:hover { color: #ffffff; }
 
-    /* --- NAVBAR --- */
-    .navbar {
+    header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 20px max(20px, calc((100vw - 1100px) / 2));
-      border-bottom: 1px solid var(--border-heavy);
-      background: rgba(255, 255, 255, 0.8);
-      backdrop-filter: blur(8px);
+      padding: 20px 40px;
+      background-color: rgba(247, 248, 240, 0.85);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
-    
-    .brand {
+
+    .logo {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 22px;
       display: flex;
       align-items: center;
-      gap: 12px;
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 24px;
-      font-weight: 700;
+      gap: 8px;
     }
-    .brand img { width: 28px; height: 28px; }
-    
-    .nav-links { display: flex; gap: 24px; align-items: center; font-size: 14px; font-weight: 500; }
-    
-    .btn-nav {
-      border: 1px solid var(--border-heavy);
-      padding: 8px 18px;
-      font-weight: 600;
-      background: #ffffff;
-      transition: all 0.1s;
-    }
-    .btn-nav:hover { background: var(--border-heavy); color: #ffffff; }
 
-    /* --- MAIN GRID --- */
-    .container {
-      max-width: 1100px;
+    .logo img {
+      width: 24px;
+      height: 24px;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    nav a:hover {
+      color: var(--border);
+    }
+
+    .btn-nav {
+      background-color: var(--accent);
+      color: var(--bg-base);
+      padding: 8px 18px;
+      border-radius: 6px;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+
+    .btn-nav:hover {
+      background-color: var(--accent-hover);
+      color: var(--bg-base);
+    }
+
+    main {
+      max-width: 960px;
       margin: 80px auto;
       padding: 0 20px;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+
+    .hero h1 {
+      font-size: 44px;
+      margin-bottom: 16px;
+    }
+
+    .hero p {
+      font-size: 18px;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .grid {
       display: grid;
-      grid-template-columns: 1.2fr 0.8fr;
-      gap: 80px;
-    }
-    
-    @media (max-width: 900px) {
-      .container { grid-template-columns: 1fr; gap: 60px; margin: 40px auto; }
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
     }
 
-    /* --- HERO --- */
-    .hero h1 { font-size: clamp(48px, 6vw, 72px); margin-bottom: 32px; }
-    .hero p { font-size: 20px; color: var(--text-muted); margin-bottom: 40px; max-width: 90%; }
-    .hero-actions { display: flex; gap: 16px; align-items: center; }
-
-    .btn-primary {
-      display: inline-block;
-      background: var(--accent);
-      color: #ffffff;
-      font-weight: 600;
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 16px;
-      padding: 16px 36px;
-      border: 1px solid var(--border-heavy);
-      transition: background 0.1s;
+    @media (max-width: 700px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
     }
-    .btn-primary:hover { background: #3b6499; }
 
-    /* --- PHILOSOPHY BOX --- */
-    .manifesto-box {
-      border: 1px solid var(--border-heavy);
-      background: #ffffff;
-      padding: 40px;
+    .card {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 32px;
+      box-shadow: 0 4px 20px rgba(53, 88, 114, 0.08);
     }
-    
-    .manifesto-box h3 {
-      font-size: 20px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid var(--border);
+
+    .card h2 {
+      font-size: 22px;
+      margin-bottom: 12px;
+    }
+
+    .card p {
+      color: var(--text-muted);
       margin-bottom: 24px;
+      font-size: 15px;
     }
 
-    .manifesto-list { list-style: none; display: flex; flex-direction: column; gap: 24px; }
-    .manifesto-list li { display: flex; gap: 16px; align-items: flex-start; }
+    .list {
+      list-style: none;
+      margin-bottom: 32px;
+    }
 
-    .manifesto-num {
-      font-family: 'Space Grotesk', sans-serif;
+    .list li {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--bg-base);
+      display: flex;
+      justify-content: space-between;
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    .list li:last-child {
+      border-bottom: none;
+    }
+
+    .list li span {
+      font-family: 'Share Tech', monospace;
+      color: var(--border);
       font-size: 14px;
-      font-weight: 700;
-      color: var(--accent);
-      background: #f0f4f8;
-      padding: 4px 8px;
-      border: 1px solid #cbd5e1;
     }
 
-    .manifesto-list strong { display: block; font-size: 16px; font-weight: 600; margin-bottom: 4px; font-family: 'Space Grotesk', sans-serif; }
-    .manifesto-list span { display: block; font-size: 14px; color: var(--text-muted); }
+    .btn {
+      display: inline-block;
+      background-color: var(--accent);
+      color: var(--bg-base);
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 15px;
+      transition: background 0.2s;
+    }
 
+    .btn:hover {
+      background-color: var(--accent-hover);
+    }
+
+    .btn.soft {
+      background-color: var(--highlight);
+      color: var(--accent);
+    }
+
+    .btn.soft:hover {
+      background-color: #7AAACE;
+      color: var(--bg-base);
+    }
+
+    footer {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-muted);
+      font-family: 'Share Tech', monospace;
+      font-size: 14px;
+      border-top: 1px solid var(--border);
+      margin-top: 80px;
+      background-color: var(--surface);
+    }
   </style>
 </head>
 <body>
 
-  <!-- Updated banner linking to blog post -->
-  <div class="announcement">
-    Knoodle is shifting focus to become the best open-source study tool. <a href="blog.html#the-pivot">Read the developer update</a>.
-  </div>
-
-  <header class="navbar">
-    <a href="index.html" class="brand">
+  <header>
+    <a href="#" class="logo">
       <img src="icon.png" alt="Knoodle">
-      <span>Knoodle.</span>
+      Knoodle
     </a>
-    <div class="nav-links">
-      <!-- Added Blog link -->
+    <nav>
       <a href="blog.html">Blog</a>
-      <a href="login.html">Log in</a>
-      <a href="login.html?mode=signup" class="btn-nav">Create Account</a>
-    </div>
+      <a href="#">Log in</a>
+      <a href="#" class="btn-nav">Sign up</a>
+    </nav>
   </header>
 
-  <main class="container">
-    
+  <main>
     <section class="hero">
-      <h1>Studying shouldn't feel like a mobile game.</h1>
-      <p>No streaks. No fake coins. No microtransactions. Knoodle is a straight-forward, open-source tool designed to help you memorize what matters, and then get out of your way.</p>
-      <div class="hero-actions">
-        <a href="login.html?mode=signup" class="btn-primary">Start Studying</a>
-      </div>
+      <h1>Tools and games.</h1>
+      <p>A small workspace for focus and downtime. Includes a timer, typing test, and some logic puzzles to play when you need a break.</p>
     </section>
 
-    <aside class="manifesto-box">
-      <h3>The Knoodle Philosophy</h3>
-      <ul class="manifesto-list">
-        <li>
-          <span class="manifesto-num">01</span>
-          <div>
-            <strong>Knowledge over Gamification</strong>
-            <span>We don't do fake points or leaderboards. We measure what you actually know, and what you're about to forget.</span>
-          </div>
-        </li>
-        <li>
-          <span class="manifesto-num">02</span>
-          <div>
-            <strong>Breaks that matter</strong>
-            <span>Instead of doomscrolling, play our custom-built logic games. Keep your brain sharp when you step away from the books.</span>
-          </div>
-        </li>
-        <li>
-          <span class="manifesto-num">03</span>
-          <div>
-            <strong>Built in the open</strong>
-            <span>Knoodle is developed by a student, for students. The core engine is completely open-source and free of hidden algorithms.</span>
-          </div>
-        </li>
-      </ul>
-    </aside>
+    <div class="grid">
+      
+      <div class="card">
+        <h2>Workbench</h2>
+        <p>Utilities for getting things done.</p>
+        <ul class="list">
+          <li>Focus Timer <span>READY</span></li>
+          <li>Typing Test <span>READY</span></li>
+          <li>Flashcards <span>READY</span></li>
+        </ul>
+        <a href="#" class="btn soft">Go to Workbench</a>
+      </div>
 
+      <div class="card">
+        <h2>Arcade</h2>
+        <p>Games for taking a break.</p>
+        <ul class="list">
+          <li>Minesweeper <span>PLAY</span></li>
+          <li>Poker <span>PLAY</span></li>
+          <li>Word Match <span>SOON</span></li>
+        </ul>
+        <a href="#" class="btn">Go to Arcade</a>
+      </div>
+
+    </div>
   </main>
+
+  <footer>
+    Kaier Chang &copy; 2026
+  </footer>
 
 </body>
 </html>
