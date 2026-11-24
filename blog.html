@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog & Updates — Knoodle</title>
+
+  <link rel="icon" type="image/png" href="icon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --border: #cbd5e1;
+      --border-heavy: #0f172a;
+      --accent: #4a7cbe;
+    }
+
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+      border-radius: 0 !important; 
+      box-shadow: none !important;
+    }
+    
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      color: var(--text-main);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      background-color: #f8fafc;
+      background-image: 
+        radial-gradient(at 0% 0%, hsla(210, 60%, 90%, 1) 0, transparent 50%),
+        radial-gradient(at 100% 0%, hsla(200, 50%, 95%, 1) 0, transparent 50%),
+        radial-gradient(at 100% 100%, hsla(210, 60%, 92%, 1) 0, transparent 50%),
+        radial-gradient(at 0% 100%, hsla(200, 50%, 96%, 1) 0, transparent 50%);
+      background-attachment: fixed;
+    }
+
+    h1, h2, h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      color: var(--text-main);
+      line-height: 1.2;
+      letter-spacing: -0.5px;
+    }
+
+    a { color: var(--accent); text-decoration: none; font-weight: 500; transition: color 0.1s; }
+    a:hover { color: #3b6499; text-decoration: underline; }
+
+    /* --- NAVBAR --- */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px max(20px, calc((100vw - 1100px) / 2));
+      border-bottom: 1px solid var(--border-heavy);
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(8px);
+    }
+    
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+    .brand img { width: 28px; height: 28px; }
+    
+    .nav-links { display: flex; gap: 24px; align-items: center; font-size: 14px; font-weight: 500; }
+    .nav-links a { color: var(--text-main); }
+    .nav-links a:hover { color: var(--accent); }
+    
+    .btn-nav {
+      border: 1px solid var(--border-heavy);
+      padding: 8px 18px;
+      font-weight: 600;
+      background: #ffffff;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+    .btn-nav:hover { background: var(--border-heavy); color: #ffffff; text-decoration: none; }
+
+    /* --- BLOG LAYOUT --- */
+    .blog-container {
+      max-width: 800px;
+      margin: 80px auto;
+      padding: 0 20px;
+    }
+
+    .page-title {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+    
+    .page-subtitle {
+      font-size: 18px;
+      color: var(--text-muted);
+      margin-bottom: 60px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border-heavy);
+    }
+
+    /* --- POST --- */
+    .post {
+      margin-bottom: 80px;
+      padding-bottom: 40px;
+      border-bottom: 1px solid var(--border);
+    }
+    .post:last-child {
+      border-bottom: none;
+    }
+
+    .post-meta {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--accent);
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .post h2 {
+      font-size: 32px;
+      margin-bottom: 20px;
+    }
+
+    .post p {
+      font-size: 17px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    .post ul {
+      margin-bottom: 20px;
+      padding-left: 20px;
+      color: var(--text-muted);
+      font-size: 17px;
+    }
+
+    .post li {
+      margin-bottom: 8px;
+    }
+
+    .post strong {
+      color: var(--text-main);
+      font-weight: 600;
+    }
+
+    /* Highlight for the banner target */
+    .post:target {
+      animation: highlight 2s ease-out;
+    }
+    @keyframes highlight {
+      0% { background-color: #f0f4f8; }
+      100% { background-color: transparent; }
+    }
+
+  </style>
+</head>
+<body>
+
+  <header class="navbar">
+    <a href="index.html" class="brand">
+      <img src="icon.png" alt="Knoodle">
+      <span>Knoodle.</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="blog.html">Blog</a>
+      <a href="login.html">Log in</a>
+      <a href="login.html?mode=signup" class="btn-nav">Create Account</a>
+    </div>
+  </header>
+
+  <main class="blog-container">
+    
+    <h1 class="page-title">Developer Updates</h1>
+    <p class="page-subtitle">News, philosophy, and technical breakdowns from the Knoodle development team.</p>
+
+    <!-- POST 1 (Linked from banner) -->
+    <article class="post" id="the-pivot">
+      <span class="post-meta">October 24, 2026 • Kaier Chang</span>
+      <h2>The Pivot: Why Knoodle is focusing on tools, not just content.</h2>
+      <p>When I started building Knoodle, the goal was to create a massive learning platform that taught everything from languages to mathematics. It didn't take long to realize a harsh truth: building a platform that teaches deeply requires deep expertise in the subject matter. If I don't speak fluent French, I can't build a flawless French curriculum.</p>
+      
+      <p>But I do know how to code. I know how memory works, and I know that modern ed-tech apps are fundamentally broken. They prioritize daily streaks, fake coins, and infinite scrolling over actual retention.</p>
+
+      <p>So we are pivoting. <strong>Knoodle is no longer just a content platform. It is a tool.</strong></p>
+
+      <ul>
+        <li><strong>The Flashcards:</strong> We are focusing entirely on the spaced-repetition engine. You provide the terms and definitions (or use our public decks), and our algorithm handles the rest. It forces you to recall what's difficult and gets out of your way.</li>
+        <li><strong>The Games:</strong> You need to step away from the screen. Instead of endless scrolling, we've built logic games (Minesweeper, Poker) to give your brain a deliberate, structured break.</li>
+        <li><strong>Open Source:</strong> The core engine is fully open-source. No hidden algorithms, no data selling.</li>
+      </ul>
+      
+      <p>This is a better path. It respects your time, and it builds something real.</p>
+    </article>
+
+    <!-- POST 2 -->
+    <article class="post" id="arcade">
+      <span class="post-meta">October 15, 2026 • Kaier Chang</span>
+      <h2>Why we built an "After Hours" arcade.</h2>
+      <p>We all know the feeling of burnout. You study for two hours, your brain turns to mush, and you open up Instagram or TikTok to "rest" for ten minutes. Suddenly, an hour is gone, and your brain feels worse than before.</p>
+      
+      <p>Doomscrolling is not a break. It's just a different kind of strain.</p>
+
+      <p>We added the Games Arcade because we believe in <strong>deliberate breaks</strong>. Playing a game of Minesweeper or Texas Hold'em requires a different kind of cognitive load than memorizing flashcards. It's a shift in focus, not a shutdown of the brain.</p>
+
+      <p>Our Minesweeper build is pure logic—no ads, no timers forced on you, just the grid. Our Poker AI is designed with distinct personalities so it actually feels like sitting at a table. It's a way to reset your mind before getting back to the work.</p>
+    </article>
+
+    <!-- POST 3 -->
+    <article class="post" id="algorithm">
+      <span class="post-meta">October 2, 2026 • Kaier Chang</span>
+      <h2>How our spaced repetition engine actually works.</h2>
+      <p>Most flashcard apps use a brute-force approach. They show you a card, you flip it, and you move on. If you get it wrong, it comes back tomorrow. That's inefficient.</p>
+
+      <p>We use a modified SM-2 algorithm (the backbone of SuperMemo and Anki). Every card you see is given an "Easiness Factor" and an "Interval." </p>
+
+      <ul>
+        <li>When you get a card right, its interval increases exponentially (e.g., 1 day, 3 days, 7 days, 16 days).</li>
+        <li>When you get it wrong, the interval resets, and the card immediately enters a "relearning" state.</li>
+        <li>Before every answer, we ask you to do a "gut check" (Sure, Not Sure, No Idea).</li>
+      </ul>
+
+      <p>This allows the algorithm to measure not just <i>what</i> you know, but <i>how well</i> you know it. It catches the difference between a lucky guess and genuine recall. No points. No streaks. Just accurate data about your memory.</p>
+    </article>
+
+  </main>
+
+</body>
+</html>
