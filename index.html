@@ -1,664 +1,249 @@
-<!doctype html>
-  <!-- Welcome to my Open Source Code. I am Kaier, and I am a beginner, lol. so don't judge me. -->
-<html lang="en" data-theme="light">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta name="google-site-verification" content="8ZWaO2FE6rNKoNG0DffXfhXdSEUXTw7gDRCYHSZnCuM" />
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Knoodle — The All-in-One Free Learning Platform</title>
-  <meta name="description" content="Learn languages, maths, history, music, science, and more with Knoodle. Personalize your learning experience and discover new ways to learn, practise, and grow.">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Knoodle — Study Tool</title>
 
   <link rel="icon" type="image/png" href="icon.png">
-  <link rel="apple-touch-icon" href="icon.png">
 
-  <!-- font (very important)-->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
   <style>
-    /* --- bg theme (how amazing) --- */
-    :root[data-theme="light"] {
-      --bg: #fef8f0;
-      --surface: #fffdf8;
-      --text-main: #4a3f38;
-      --text-muted: #9b8877;
-      --border: #f0e4d4;
-      --primary: #dd7860;
-      --primary-hover: #b85a44;
-      --primary-light: #fce8dc;
-      --icon-border: #e8c9b8;
-      --card-shadow: 0 6px 20px rgba(200, 140, 100, 0.08);
-      --card-hover-shadow: 0 12px 28px rgba(200, 140, 100, 0.15);
-      --btn-text: #ffffff;
-      --toast-bg: #3c3028;
-      --toast-text: #ffffff;
-    }
-
-    :root[data-theme="dark"] {
-      --bg: #1a1816;
-      --surface: #24211e;
-      --text-main: #f0ebe1;
-      --text-muted: #9c9691;
-      --border: #3a342f;
-      --primary: #e68b73;
-      --primary-hover: #f2a38d;
-      --primary-light: #3a2a24;
-      --icon-border: #4a3830;
-      --card-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
-      --card-hover-shadow: 0 16px 40px rgba(230, 139, 115, 0.15);
-      --btn-text: #1a1816;
-      --toast-bg: #f0ebe1;
-      --toast-text: #1a1816;
-    }
-
-    /* --- base styles(yuhuuu) --- */
     :root {
-      --radius-a: 16px 20px 18px 22px;
-      --radius-b: 20px 16px 22px 18px;
-      --radius-c: 18px 22px 16px 20px;
+      --bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --border: #cbd5e1;
+      --border-heavy: #0f172a;
+      --accent: #4a7cbe;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+      border-radius: 0 !important; 
+      box-shadow: none !important;
     }
-
+    
     body {
-      background-color: var(--bg);
+      font-family: 'Inter', system-ui, sans-serif;
       color: var(--text-main);
-      font-family: 'Nunito', ui-rounded, "SF Pro Rounded", system-ui, sans-serif;
-      font-size: 16px;
-      line-height: 1.55;
+      line-height: 1.6;
       -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
-      background-image:
-        radial-gradient(circle at 20% 10%, rgba(221, 120, 96, 0.04) 0, transparent 40%),
-        radial-gradient(circle at 80% 80%, rgba(127, 176, 105, 0.04) 0, transparent 40%),
-        linear-gradient(rgba(177, 202, 210, 0.08) 1px, transparent 1px);
-      background-size: auto, auto, 100% 34px;
+      /* gradient stops it looking flat, but keep it subtle, i think*/
+      background-color: #f8fafc;
+      background-image: 
+        radial-gradient(at 0% 0%, hsla(210, 60%, 90%, 1) 0, transparent 50%),
+        radial-gradient(at 100% 0%, hsla(200, 50%, 95%, 1) 0, transparent 50%),
+        radial-gradient(at 100% 100%, hsla(210, 60%, 92%, 1) 0, transparent 50%),
+        radial-gradient(at 0% 100%, hsla(200, 50%, 96%, 1) 0, transparent 50%);
+      background-attachment: fixed;
     }
 
     h1, h2, h3 {
-      font-weight: 850;
-      line-height: 1.2;
-      letter-spacing: -0.8px;
+      font-family: 'Space Grotesk', sans-serif;
+      color: var(--text-main);
+      line-height: 1.1;
+      letter-spacing: -0.5px;
     }
 
-    /* --- topbar (oooooh, I'm just wasting my storage, here i guess, so no more comments, bye!) --- */
-    .topbar {
-      height: 70px;
-      padding: 0 max(20px, calc((100vw - 920px) / 2));
+    a { color: var(--text-main); text-decoration: none; font-weight: 500; transition: color 0.1s; }
+    a:hover { color: var(--accent); }
+
+    /* --- ANNOUNCEMENT BAR --- */
+    .announcement {
+      background: var(--border-heavy);
+      color: #ffffff;
+      text-align: center;
+      padding: 12px 20px;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+    .announcement a { color: #cbd5e1; text-decoration: underline; font-weight: 600; }
+    .announcement a:hover { color: #ffffff; }
+
+    /* --- NAVBAR --- */
+    .navbar {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      background: var(--bg);
-      border-bottom: 1px solid var(--border);
-      position: sticky;
-      top: 0;
-      z-index: 50;
+      align-items: center;
+      padding: 20px max(20px, calc((100vw - 1100px) / 2));
+      border-bottom: 1px solid var(--border-heavy);
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(8px);
     }
-
+    
     .brand {
       display: flex;
       align-items: center;
-      gap: 11px;
-      color: var(--text-main);
-      font-weight: 850;
-      font-size: 22px;
-      text-decoration: none;
-    }
-
-    .brand-mascot {
-      width: 40px;
-      height: 40px;
-      object-fit: contain;
-      border-radius: 8px;
-    }
-
-    .nav-right {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .beta-pill {
-      font-size: 11.5px;
-      color: var(--primary);
-      border: 1.5px dashed var(--icon-border);
-      border-radius: 99px;
-      padding: 6px 12px;
-      background: var(--primary-light);
+      gap: 12px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 24px;
       font-weight: 700;
-      letter-spacing: 0.2px;
     }
-
-    /* --- NEW NAV BUTTONS --- */
-    .nav-login,
-    .nav-signup {
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 800;
-      white-space: nowrap;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
+    .brand img { width: 28px; height: 28px; }
+    
+    .nav-links { display: flex; gap: 24px; align-items: center; font-size: 14px; font-weight: 500; }
+    
+    .btn-nav {
+      border: 1px solid var(--border-heavy);
+      padding: 8px 18px;
+      font-weight: 600;
+      background: #ffffff;
+      transition: all 0.1s;
     }
+    .btn-nav:hover { background: var(--border-heavy); color: #ffffff; }
 
-    .nav-login {
-      color: var(--text-main);
-      padding: 8px 14px;
-      border-radius: var(--radius-c);
-    }
-
-    .nav-login:hover {
-      color: var(--primary);
-      background-color: var(--primary-light);
-    }
-
-    .nav-signup {
-      background: var(--primary);
-      color: var(--btn-text);
-      padding: 9px 18px;
-      border-radius: var(--radius-a);
-      box-shadow: 0 4px 10px rgba(221, 120, 96, 0.2);
-    }
-
-    .nav-signup:hover {
-      background: var(--primary-hover);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 14px rgba(221, 120, 96, 0.3);
-    }
-    /* ------------------------ */
-
-    .theme-toggle {
-      background: var(--surface);
-      border: 1.5px solid var(--border);
-      color: var(--text-main);
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .theme-toggle:hover {
-      border-color: var(--primary);
-      color: var(--primary);
-      transform: rotate(15deg);
-    }
-
-    /* --- big box --- */
-    .app {
-      max-width: 920px;
-      margin: 0 auto;
-      padding: 40px 20px 60px;
-    }
-
-    /* --- hero --- */
-    .hero {
-      background: var(--surface);
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius-a);
-      padding: 50px 30px;
-      margin-bottom: 50px;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-      box-shadow: var(--card-shadow);
-    }
-
-    .hero::after {
-      content: "";
-      position: absolute;
-      right: -30px;
-      bottom: -40px;
-      width: 180px;
-      height: 180px;
-      border-radius: 50%;
-      background: var(--primary-light);
-      opacity: 0.5;
-      z-index: 0;
-    }
-
-    .hero > * {
-      position: relative;
-      z-index: 1;
-    }
-
-    .hero h1 {
-      margin: 0;
-      font-size: clamp(32px, 5vw, 46px);
-      color: var(--text-main);
-      letter-spacing: -1.5px;
-    }
-
-    .hero h1 span {
-      color: var(--primary);
-    }
-
-    .hero p {
-      margin: 18px auto 30px;
-      color: var(--text-muted);
-      font-size: 16.5px;
-      max-width: 540px;
-      line-height: 1.5;
-    }
-
-    .cta-button {
-      background: var(--primary);
-      color: var(--btn-text);
-      border: none;
-      padding: 16px 32px;
-      border-radius: var(--radius-a);
-      font-family: inherit;
-      font-size: 16px;
-      font-weight: 800;
-      box-shadow: 0 4px 14px rgba(221, 120, 96, 0.3);
-      transition: all 0.2s;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-      text-decoration: none; /* Added to prevent underline */
-    }
-
-    .cta-button:hover {
-      background: var(--primary-hover);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(221, 120, 96, 0.4);
-    }
-
-    /* --- features boxes (is the plural form correct??? idk, i need to learn it at knoodle) --- */
-    .section-title {
-      text-align: center;
-      font-size: 26px;
-      margin-bottom: 8px;
-      color: var(--text-main);
-    }
-
-    .section-sub {
-      text-align: center;
-      color: var(--text-muted);
-      font-size: 15px;
-      margin-bottom: 36px;
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .grid {
+    /* --- MAIN GRID --- */
+    .container {
+      max-width: 1100px;
+      margin: 80px auto;
+      padding: 0 20px;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 80px;
+    }
+    
+    @media (max-width: 900px) {
+      .container { grid-template-columns: 1fr; gap: 60px; margin: 40px auto; }
+    }
+
+    /* --- HERO --- */
+    .hero h1 { 
+      font-size: clamp(48px, 6vw, 72px); 
+      margin-bottom: 32px; 
+    }
+    
+    .hero p { 
+      font-size: 20px; 
+      color: var(--text-muted); 
+      margin-bottom: 40px; 
+      max-width: 90%;
+    }
+
+    .hero-actions { display: flex; gap: 16px; align-items: center; }
+
+    .btn-primary {
+      display: inline-block;
+      background: var(--accent);
+      color: #ffffff;
+      font-weight: 600;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 16px;
+      padding: 16px 36px;
+      border: 1px solid var(--border-heavy);
+      transition: background 0.1s;
+    }
+    .btn-primary:hover { background: #3b6499; }
+
+    /* --- PHILOSOPHY BOX --- */
+    .manifesto-box {
+      border: 1px solid var(--border-heavy);
+      background: #ffffff;
+      padding: 40px;
+    }
+    
+    .manifesto-box h3 {
+      font-size: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    .manifesto-list { list-style: none; display: flex; flex-direction: column; gap: 24px; }
+    
+    .manifesto-list li {
+      display: flex;
       gap: 16px;
-      margin-bottom: 50px;
+      align-items: flex-start;
     }
 
-    .feature-card {
-      background: var(--surface);
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius-c);
-      padding: 24px;
-      box-shadow: var(--card-shadow);
-      transition: transform 0.2s, border-color 0.2s;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .feature-card:hover {
-      transform: translateY(-4px);
-      border-color: var(--icon-border);
-    }
-
-    .feature-icon-wrap {
-      width: 48px;
-      height: 48px;
-      background: var(--primary-light);
-      border-radius: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 1.5px dashed var(--icon-border);
-      margin-bottom: 16px;
-      color: var(--primary);
-    }
-
-    .feature-card h3 {
-      margin: 0 0 8px;
-      font-size: 18px;
-      color: var(--text-main);
-    }
-
-    .feature-card p {
-      margin: 0;
-      color: var(--text-muted);
+    .manifesto-num {
+      font-family: 'Space Grotesk', sans-serif;
       font-size: 14px;
-      line-height: 1.5;
-    }
-
-    /* --- More info section --- */
-    .vision-panel {
-      background: var(--surface);
-      border: 1.5px dashed var(--icon-border);
-      border-radius: var(--radius-b);
-      padding: 36px;
-      margin-bottom: 40px;
-      box-shadow: var(--card-shadow);
-    }
-
-    .vision-panel h2 {
-      margin: 0 0 8px;
-      font-size: 22px;
-      color: var(--text-main);
-    }
-
-    .vision-panel p {
-      margin: 0 0 24px;
-      color: var(--text-muted);
-      font-size: 15.5px;
-      line-height: 1.6;
-    }
-
-    .vision-panel p:last-child {
-      margin-bottom: 0;
-    }
-
-    .vision-panel em {
-      color: var(--primary);
-      font-style: normal;
       font-weight: 700;
+      color: var(--accent);
+      background: #f0f4f8;
+      padding: 4px 8px;
+      border: 1px solid #cbd5e1;
     }
 
-    /* --- end --- */
-    footer {
-      text-align: center;
-      padding: 30px 20px;
-      border-top: 1.5px dashed var(--border);
-      color: var(--text-muted);
-      font-size: 13px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      align-items: center;
+    .manifesto-list strong { 
+      display: block; 
+      font-size: 16px; 
+      font-weight: 600; 
+      margin-bottom: 4px; 
+      font-family: 'Space Grotesk', sans-serif; 
+    }
+    
+    .manifesto-list span { 
+      display: block; 
+      font-size: 14px; 
+      color: var(--text-muted); 
     }
 
-    footer a {
-      color: var(--primary);
-      text-decoration: none;
-      font-weight: 700;
-    }
-
-    footer a:hover {
-      text-decoration: underline wavy 1.5px;
-    }
-
-    /* --- TOAST --- */
-    .toast {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translate(-50%, 20px);
-      background: var(--toast-bg);
-      color: var(--toast-text);
-      padding: 12px 20px;
-      border-radius: var(--radius-a);
-      font-size: 14px;
-      opacity: 0;
-      pointer-events: none;
-      transition: 0.25s;
-      z-index: 100;
-      max-width: 90vw;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-      font-weight: 700;
-    }
-
-    .toast.show {
-      opacity: 1;
-      transform: translate(-50%, 0);
-    }
-
-    /* --- RESPONSIVE --- */
-    @media (max-width: 600px) {
-      .app {
-        padding: 20px 14px 40px;
-      }
-      .hero {
-        padding: 36px 20px;
-      }
-      .vision-panel {
-        padding: 24px;
-      }
-    }
-
-    /* --- MOBILE NAV ADJUSTMENTS --- */
-    @media (max-width: 480px) {
-      .nav-right {
-        gap: 9px;
-      }
-
-      .beta-pill {
-        display: none;
-      }
-
-      .nav-login,
-      .nav-signup {
-        font-size: 12px;
-      }
-
-      .nav-signup {
-        padding: 8px 10px;
-      }
-    }
   </style>
 </head>
 <body>
 
-  <!-- header -->
-  <header class="topbar">
-    <a class="brand" href="#">
-      <img class="brand-mascot" src="icon.png" alt="Knoodle Logo">
-      <span>Knoodle</span>
+  <div class="announcement">
+    Knoodle is shifting focus to become the best open-source study tool. <a href="#">Read the developer update</a>.
+  </div>
+
+  <header class="navbar">
+    <a href="index.html" class="brand">
+      <img src="icon.png" alt="Knoodle">
+      <span>Knoodle.</span>
     </a>
-    <div class="nav-right">
-      <span class="beta-pill">Beta</span>
-      <a class="nav-login" href="login.html">Log in</a>
-      <a class="nav-signup" href="login.html?mode=signup">Get started</a>
-      <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
-        <svg id="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-        <svg id="icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-      </button>
+    <div class="nav-links">
+      <a href="login.html">Log in</a>
+      <a href="login.html?mode=signup" class="btn-nav">Create Account</a>
     </div>
   </header>
 
-  <main class="app">
-
-    <!-- hero -->
+  <main class="container">
+    
     <section class="hero">
-      <h1>Learn it. Know it.<br><span>Knoodle it.</span></h1>
-      <p>Explore new ideas, discover what interests you, and make learning your own — one step at a time.</p>
-
-      <!-- Changed to <a> tag -->
-      <a class="cta-button" href="login.html">
-        Get Started
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </a>
+      <h1>Studying shouldn't feel like a mobile game.</h1>
+      <p>No streaks. No fake coins. No microtransactions. Knoodle is a straight-forward, open-source tool designed to help you memorize what matters, and then get out of your way.</p>
+      <div class="hero-actions">
+        <a href="login.html?mode=signup" class="btn-primary">Start Studying</a>
+      </div>
     </section>
 
-    <!-- Features -->
-    <h2 class="section-title">One platform. Any knowledge.</h2>
-    <p class="section-sub">Knoodle is coming out soon! Stay tuned!</p>
-
-    <div class="grid">
-      <!-- Language -->
-      <div class="feature-card">
-        <div class="feature-icon-wrap">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-            <path d="M8 9h8"></path>
-            <path d="M8 13h5"></path>
-          </svg>
-        </div>
-        <h3>Language</h3>
-        <p>Learn new languages, build your vocabulary, master grammar, and practise until speaking a new language feels natural.</p>
-      </div>
-
-      <!-- Coding & Technology -->
-      <div class="feature-card">
-        <div class="feature-icon-wrap">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="16 18 22 12 16 6"></polyline>
-            <polyline points="8 6 2 12 8 18"></polyline>
-          </svg>
-        </div>
-        <h3>Coding & Technology</h3>
-        <p>Explore programming, discover how computers work, and dive into AI, web development, and the digital world.</p>
-      </div>
-
-      <!-- Science & Nature -->
-      <div class="feature-card">
-        <div class="feature-icon-wrap">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path>
-            <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path>
-          </svg>
-        </div>
-        <h3>Science & Nature</h3>
-        <p>Discover how the universe works, explore the wonders of nature, and uncover the science behind everyday life.</p>
-      </div>
-
-      <!-- Math & Logic -->
-      <div class="feature-card">
-        <div class="feature-icon-wrap">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M5 8h6"></path>
-            <path d="M8 5v6"></path>
-            <path d="M15 8h6"></path>
-            <path d="M5 18h6"></path>
-            <path d="M16 17l4 4"></path>
-            <path d="M20 17l-4 4"></path>
-          </svg>
-        </div>
-        <h3>Math & Logic</h3>
-        <p>Strengthen your maths skills, solve tricky problems, recognize patterns, and train your brain to think logically.</p>
-      </div>
-
-      <!-- Humanities & World -->
-      <div class="feature-card">
-        <div class="feature-icon-wrap">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"></circle>
-            <path d="M2 12h20"></path>
-            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-          </svg>
-        </div>
-        <h3>Humanities & World</h3>
-        <p>Explore history, geography, cultures, and society to discover how people live, how the world changed, and why it matters today.</p>
-      </div>
-
-      <!-- Games & Problem-Solving -->
-      <div class="feature-card">
-        <div class="feature-icon-wrap">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="6" y1="12" x2="10" y2="12"></line>
-            <line x1="8" y1="10" x2="8" y2="14"></line>
-            <line x1="15" y1="13" x2="15.01" y2="13"></line>
-            <line x1="18" y1="11" x2="18.01" y2="11"></line>
-            <rect x="2" y="6" width="20" height="12" rx="2"></rect>
-          </svg>
-        </div>
-        <h3>Games & Problem-Solving</h3>
-        <p>Put your brain to the test with puzzles, riddles, memory challenges, and strategy games that make learning feel like play.</p>
-      </div>
-    </div>
-
-    <!-- more info -->
-    <div class="vision-panel">
-      <h2>Quality over quantity.</h2>
-      <p>Most study apps count what you've flipped. Knoodle counts what you actually <em>know</em>. It tracks your confidence, separates "shaky" memory from solid knowledge, and builds your progress around honest numbers.</p>
-
-      <h2>Open Source. Real Brand.</h2>
-      <p>Knoodle is being built in the open by Kaier. The core learning engine is open-source (BSD 3-Clause), while the brand and future hosted app remain private. It's a student project growing into a real platform, one feature at a time.</p>
-    </div>
+    <aside class="manifesto-box">
+      <h3>The Knoodle Philosophy</h3>
+      <ul class="manifesto-list">
+        <li>
+          <span class="manifesto-num">01</span>
+          <div>
+            <strong>Knowledge over Gamification</strong>
+            <span>We don't do fake points or leaderboards. We measure what you actually know, and what you're about to forget.</span>
+          </div>
+        </li>
+        <li>
+          <span class="manifesto-num">02</span>
+          <div>
+            <strong>Breaks that matter</strong>
+            <span>Instead of doomscrolling, play our custom-built logic games. Keep your brain sharp when you step away from the books.</span>
+          </div>
+        </li>
+        <li>
+          <span class="manifesto-num">03</span>
+          <div>
+            <strong>Built in the open</strong>
+            <span>Knoodle is developed by a student, for students. The core engine is completely open-source and free of hidden algorithms.</span>
+          </div>
+        </li>
+      </ul>
+    </aside>
 
   </main>
 
-  <!-- Footer -->
-  <footer>
-    <div>&copy; 2026 Kaier Chang. All rights reserved.</div>
-    <div>
-      Released under the <a href="https://github.com/kaier99percent/knoodle/blob/main/LICENSE" target="_blank">BSD 3-Clause License</a>.
-      Knoodle, the mascot, and logo are trademarks — <a href="https://github.com/kaier99percent/knoodle/blob/main/TRADEMARKS.md" target="_blank">see here</a>.
-    </div>
-    <div style="margin-top: 8px;">
-      <a href="terms.html">Terms of Service</a> &middot; <a href="privacy.html">Privacy Policy</a>
-    </div>
-  </footer>
-
-  <div id="toast" class="toast"></div>
-
-  <script>
-    // Wait until the DOM is fully loaded before running any scripts
-    document.addEventListener('DOMContentLoaded', function() {
-
-      // --- theme logic ---
-      const themeToggle = document.getElementById('theme-toggle');
-      const iconMoon = document.getElementById('icon-moon');
-      const iconSun = document.getElementById('icon-sun');
-      const root = document.documentElement;
-
-      // Safe function to update icons (lol, shoutout to my friend he helped me a lot)
-      function updateIcon(theme) {
-        if (!iconMoon || !iconSun) return;
-        if (theme === 'dark') {
-          iconMoon.style.display = 'none';
-          iconSun.style.display = 'block';
-        } else {
-          iconMoon.style.display = 'block';
-          iconSun.style.display = 'none';
-        }
-      }
-
-      // Determine initial theme (wrapped in try/catch to prevent crashes if localStorage is blocked)
-      let initialTheme = 'light';
-      try {
-        const savedTheme = localStorage.getItem('knoodle-theme');
-        if (savedTheme) {
-          initialTheme = savedTheme;
-        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-          initialTheme = 'dark';
-        }
-      } catch (e) {
-        console.warn("Local storage is blocked, using default theme.");
-      }
-
-      root.setAttribute('data-theme', initialTheme);
-      updateIcon(initialTheme);
-
-      // Toggle theme on click
-      if (themeToggle) {
-        themeToggle.addEventListener('click', function() {
-          const currentTheme = root.getAttribute('data-theme') || 'light';
-          const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-
-          root.setAttribute('data-theme', newTheme);
-          updateIcon(newTheme);
-
-          try {
-            localStorage.setItem('knoodle-theme', newTheme);
-          } catch (e) {
-            // Ignore storage errors
-          }
-        });
-      }
-
-      // The request beta acces has been removed!
-
-    });
-  </script>
 </body>
 </html>
