@@ -34,7 +34,6 @@
       color: var(--text-main);
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
-      /* gradient stops it looking flat, but keep it subtle, i think*/
       background-color: #f8fafc;
       background-image: 
         radial-gradient(at 0% 0%, hsla(210, 60%, 90%, 1) 0, transparent 50%),
@@ -114,18 +113,8 @@
     }
 
     /* --- HERO --- */
-    .hero h1 { 
-      font-size: clamp(48px, 6vw, 72px); 
-      margin-bottom: 32px; 
-    }
-    
-    .hero p { 
-      font-size: 20px; 
-      color: var(--text-muted); 
-      margin-bottom: 40px; 
-      max-width: 90%;
-    }
-
+    .hero h1 { font-size: clamp(48px, 6vw, 72px); margin-bottom: 32px; }
+    .hero p { font-size: 20px; color: var(--text-muted); margin-bottom: 40px; max-width: 90%; }
     .hero-actions { display: flex; gap: 16px; align-items: center; }
 
     .btn-primary {
@@ -156,12 +145,7 @@
     }
 
     .manifesto-list { list-style: none; display: flex; flex-direction: column; gap: 24px; }
-    
-    .manifesto-list li {
-      display: flex;
-      gap: 16px;
-      align-items: flex-start;
-    }
+    .manifesto-list li { display: flex; gap: 16px; align-items: flex-start; }
 
     .manifesto-num {
       font-family: 'Space Grotesk', sans-serif;
@@ -173,26 +157,16 @@
       border: 1px solid #cbd5e1;
     }
 
-    .manifesto-list strong { 
-      display: block; 
-      font-size: 16px; 
-      font-weight: 600; 
-      margin-bottom: 4px; 
-      font-family: 'Space Grotesk', sans-serif; 
-    }
-    
-    .manifesto-list span { 
-      display: block; 
-      font-size: 14px; 
-      color: var(--text-muted); 
-    }
+    .manifesto-list strong { display: block; font-size: 16px; font-weight: 600; margin-bottom: 4px; font-family: 'Space Grotesk', sans-serif; }
+    .manifesto-list span { display: block; font-size: 14px; color: var(--text-muted); }
 
   </style>
 </head>
 <body>
 
+  <!-- Updated banner linking to blog post -->
   <div class="announcement">
-    Knoodle is shifting focus to become the best open-source study tool. <a href="#">Read the developer update</a>.
+    Knoodle is shifting focus to become the best open-source study tool. <a href="blog.html#the-pivot">Read the developer update</a>.
   </div>
 
   <header class="navbar">
@@ -201,6 +175,8 @@
       <span>Knoodle.</span>
     </a>
     <div class="nav-links">
+      <!-- Added Blog link -->
+      <a href="blog.html">Blog</a>
       <a href="login.html">Log in</a>
       <a href="login.html?mode=signup" class="btn-nav">Create Account</a>
     </div>
